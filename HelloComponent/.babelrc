@@ -1,0 +1,18 @@
+{
+    
+    "presets": [
+        ["@babel/env"],
+        "@babel/preset-react"
+    ],
+    "plugins": [
+        "lodash",
+        [
+            "import",
+            {
+                "libraryName": "antd",
+               "libraryDirectory": "es",
+                "style": true
+            }
+        ]
+    ]
+}
