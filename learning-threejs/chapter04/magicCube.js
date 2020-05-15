@@ -23,8 +23,7 @@ const facesCubesIdxs = [
     // front
     [2, 5, 8, 11, 14, 17, 20, 23, 26],
     // back
-    [0, 4, 7, 9, 13, 16, 18, 22, 25],
-    
+    [0, 3, 6, 9, 12, 15, 18, 21, 24],
 ];
 
 const createMagicCube = () => {
@@ -85,41 +84,81 @@ plane.position.y = -10;
 scene.add(plane);
 
 
+let face = 1;
+let rotateCount = 0;
+const maxCount = 100;
+
+
+const roatePoint = (cx, cy, angle, p) => {
+    const sin =  Math.sin(angle);
+    const cos =  Math.cos(angle);
+
+    // translate point back to origin:
+    p.x -= cx;
+    p.y -= cy;
+
+    // rotate point
+    const newX = p.x * cos - p.y * sin;
+    const newY = p.x * sin + p.y * cos;
+
+    // translate point back:
+    p.x = newX + cx;
+    p.y = newY + cy;
+
+    return p;
+};
+
 const rotateFace = (index, rotate) => {
     let axis = 'z';
+    const { x, y , z } = magicCube.children[facesCubesIdxs[index][4]].position;
+    let pivotPoint = { x, y };
 
     console.log('rotateFace', index);
 
     if ([0, 1].includes(index)) {
         axis = 'x';
+        pivotPoint = { x: y, y: z };
     }
 
-    if ([2, 3, 5].includes(index)) {
+    if ([2, 3].includes(index)) {
         axis = 'y';
+        pivotPoint = { x: x, y: z };
     }
 
-    console.log(axis)
+    console.log(axis);
 
     facesCubesIdxs[index].forEach((index, idx) => {
         let cube = magicCube.children[index];
-        const r = 2.9;
 
-        if (idx === 4) {
-            cube.rotation[axis] += rotate;
-        } else {
-            const { x, y, z } = cube.position;
+        cube.rotation[axis] += rotate;
 
-            // cube.position.set(
-            //     x +  r * Math.sin(rotate),
-            //     y * ( 1 - r * Math.cos(rotate)),
-            //     z * ( 1 - r * Math.cos(rotate))
-            // );
+        // 每个面中心cube坐标不变，其它cube以中心cube为点轴旋转
+        if (idx !== 4) {
+            let { x, y, z } = cube.position;
+
+            if (axis === 'x') {
+                const newPoint = roatePoint(pivotPoint.x, pivotPoint.y, rotate, { x: y, y: z });
+                y = newPoint.x;
+                z = newPoint.y;
+            }
+
+            if (axis === 'y') {
+                const newPoint = roatePoint(pivotPoint.x, pivotPoint.y, rotate, { x, y: z });
+                x = newPoint.x;
+                z = newPoint.y;
+            }
+
+            if (axis === 'z') {
+                const newPoint = roatePoint(pivotPoint.x, pivotPoint.y, rotate, { x, y });
+                x = newPoint.x;
+                y = newPoint.y;
+            }
+
+            cube.position.set(x, y, z);
         }
-        
     });
 };
-let face = 0;
-let rotateCount = 0;
+
 const animate = () => {
     renderer.render(scene, camera);
     // cube.rotation.x += 0.01;
@@ -127,9 +166,9 @@ const animate = () => {
     // magicCube.rotation.y += 0.005;
     // magicCube.rotation.x += 0.01;
     // magicCube.children[face % 6].rotation.z += 0.01;
-    rotateFace(face % 6, 0.05 * Math.PI);
+    rotateFace(face % 6, 2 * Math.PI / maxCount);
     rotateCount++;
-    if (rotateCount >= 100) {
+    if (rotateCount >= maxCount) {
         console.log('rotateCount', rotateCount);
         rotateCount = 0;
         face++;
