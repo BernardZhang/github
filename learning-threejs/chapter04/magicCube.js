@@ -29,7 +29,6 @@ const facesCubesIdxs = [
 const createMagicCube = () => {
     const magicCube = new THREE.Mesh();
     let cube;
-    let index = 0;
 
     for (let x = 0; x < 3; x++) {
         for (let y = 0; y < 3; y++) {
@@ -39,7 +38,6 @@ const createMagicCube = () => {
                 cube.position.set(x * 3, y * 3, z * 3);
                 // cube.visible = facesCubesIdxs[4].includes(index);
                 magicCube.add(cube);
-                index++;
             }
         }
     }
@@ -83,11 +81,9 @@ plane.position.y = -10;
 
 scene.add(plane);
 
-
-let face = 1;
+let face = 0;
 let rotateCount = 0;
-const maxCount = 100;
-
+const maxCount = 300;
 
 const roatePoint = (cx, cy, angle, p) => {
     const sin =  Math.sin(angle);
@@ -122,7 +118,7 @@ const rotateFace = (index, rotate) => {
 
     if ([2, 3].includes(index)) {
         axis = 'y';
-        pivotPoint = { x: x, y: z };
+        pivotPoint = { x, y: z };
     }
 
     console.log(axis);
@@ -143,7 +139,7 @@ const rotateFace = (index, rotate) => {
             }
 
             if (axis === 'y') {
-                const newPoint = roatePoint(pivotPoint.x, pivotPoint.y, rotate, { x, y: z });
+                const newPoint = roatePoint(pivotPoint.x, pivotPoint.y, -rotate, { x, y: z });
                 x = newPoint.x;
                 z = newPoint.y;
             }
@@ -161,18 +157,43 @@ const rotateFace = (index, rotate) => {
 
 const animate = () => {
     renderer.render(scene, camera);
-    // cube.rotation.x += 0.01;
     cube.rotation.y += 0.01;
-    // magicCube.rotation.y += 0.005;
-    // magicCube.rotation.x += 0.01;
-    // magicCube.children[face % 6].rotation.z += 0.01;
-    rotateFace(face % 6, 2 * Math.PI / maxCount);
+    rotateFace(face % 6, 0.5 * Math.PI / maxCount);
     rotateCount++;
+
     if (rotateCount >= maxCount) {
         console.log('rotateCount', rotateCount);
+
+        /**
+         * 0 1 2 3 4 5 6 7 8
+         * 2 5 8 1 4 7 0 3 6
+         * 6 3 0 7 4 1 8 5 2
+         * 0 1 2 3 4 5 6 7 8
+         */
+        // update face cube indexes
+        // facesCubesIdxs[face] = facesCubesIdxs[face].map((index, i) => {
+        //     [
+        //         [2, 5, 8, 1, 4, 7, 0, 3, 6],
+        //         [6, 3, 0, 7, 4, 1, 8, 5, 2],
+        //         [6, 3, 0, 7, 4, 1, 8, 5, 2],
+        //     ]
+        //     return {
+        //         0: 2,
+        //         1: 5,
+        //         2: 8,
+        //         3: 1,
+        //         4: 4,
+        //         5: 7,
+        //         6: 0,
+        //         7: 3,
+        //         8: 6
+        //     }[i];
+        // });
+
         rotateCount = 0;
         face++;
     }
+
     requestAnimationFrame(animate);
 };
 
