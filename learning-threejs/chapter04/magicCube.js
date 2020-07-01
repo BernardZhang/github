@@ -1,4 +1,4 @@
-const createCube = (size = 3) => {
+const createCube = (size = 3, text) => {
     const faceColors = ['black', 'white', 'green', 'red', 'yellow', 'orange'];
     const faceMaterial = new THREE.MeshFaceMaterial(
         faceColors.reduce((acc, color) => {
@@ -11,7 +11,7 @@ const createCube = (size = 3) => {
 
     return new THREE.Mesh(cubeGeom, faceMaterial);
 };
-const facesCubesIdxs = [
+let facesCubesIdxs = [
     // left
     [0, 1, 2, 3, 4, 5, 6, 7, 8],
     // right
@@ -81,11 +81,13 @@ plane.position.y = -10;
 
 scene.add(plane);
 
-let face = 0;
+// let face = 0;
 let rotateCount = 0;
-const maxCount = 300;
+const maxCount = 400;
 
-const roatePoint = (cx, cy, angle, p) => {
+window.face = 0;
+
+const rotateAroundPoint = (cx, cy, angle, p) => {
     const sin =  Math.sin(angle);
     const cos =  Math.cos(angle);
 
@@ -133,19 +135,19 @@ const rotateFace = (index, rotate) => {
             let { x, y, z } = cube.position;
 
             if (axis === 'x') {
-                const newPoint = roatePoint(pivotPoint.x, pivotPoint.y, rotate, { x: y, y: z });
+                const newPoint = rotateAroundPoint(pivotPoint.x, pivotPoint.y, rotate, { x: y, y: z });
                 y = newPoint.x;
                 z = newPoint.y;
             }
 
-            if (axis === 'y') {
-                const newPoint = roatePoint(pivotPoint.x, pivotPoint.y, -rotate, { x, y: z });
+            if (axis === 'y') {rotateAroundPoint
+                const newPoint = (pivotPoint.x, pivotPoint.y, -rotate, { x, y: z });
                 x = newPoint.x;
                 z = newPoint.y;
             }
 
             if (axis === 'z') {
-                const newPoint = roatePoint(pivotPoint.x, pivotPoint.y, rotate, { x, y });
+                const newPoint = rotateAroundPoint(pivotPoint.x, pivotPoint.y, rotate, { x, y });
                 x = newPoint.x;
                 y = newPoint.y;
             }
@@ -155,46 +157,71 @@ const rotateFace = (index, rotate) => {
     });
 };
 
+renderer.render(scene, camera);
+
 const animate = () => {
-    renderer.render(scene, camera);
+    // renderer.render(scene, camera);
     cube.rotation.y += 0.01;
     rotateFace(face % 6, 0.5 * Math.PI / maxCount);
     rotateCount++;
 
+    renderer.render(scene, camera);
+
     if (rotateCount >= maxCount) {
         console.log('rotateCount', rotateCount);
 
-        /**
-         * 0 1 2 3 4 5 6 7 8
-         * 2 5 8 1 4 7 0 3 6
-         * 6 3 0 7 4 1 8 5 2
-         * 0 1 2 3 4 5 6 7 8
-         */
+        // [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        // [2, 5, 8, 1, 4, 7, 0, 3, 6]
+        // [8, 7, 6, 5, 4, 3, 2, 1, 0]
+        // [6, 3, 0, 7, 4, 1, 8, 5, 2]
+        // [0, 1, 2, 3, 4, 5, 6, 7, 8]
+        // 2, 5, 8, 1, 4, 7, 0, 3, 6
         // update face cube indexes
-        // facesCubesIdxs[face] = facesCubesIdxs[face].map((index, i) => {
-        //     [
-        //         [2, 5, 8, 1, 4, 7, 0, 3, 6],
-        //         [6, 3, 0, 7, 4, 1, 8, 5, 2],
-        //         [6, 3, 0, 7, 4, 1, 8, 5, 2],
-        //     ]
-        //     return {
-        //         0: 2,
-        //         1: 5,
-        //         2: 8,
-        //         3: 1,
-        //         4: 4,
-        //         5: 7,
-        //         6: 0,
-        //         7: 3,
-        //         8: 6
-        //     }[i];
-        // });
+        const transformIndicesMap = {
+            0: 2,
+            1: 5,
+            2: 8,
+            3: 1,
+            4: 4,
+            5: 7,
+            6: 0,
+            7: 3,
+            8: 6
+        };
 
+        const currentIndices = facesCubesIdxs[face];
+        const newIndices = currentIndices.map((index, i) => {
+            return currentIndices[transformIndicesMap[i]];
+        });
+
+        facesCubesIdxs = facesCubesIdxs.map((indices, index) => {
+            if (index === face) {
+                return newIndices
+            }
+
+            return indices.map((val, idx) => {
+                const currentIndex = currentIndices.indexOf(val);
+
+                if (currentIndex > -1) {
+                    return currentIndices[transformIndicesMap[currentIndex]];
+                }
+
+                return val;
+            });
+        });
+
+        console.log('facesCubesIdxs...', facesCubesIdxs);
+        window.facesCubesIdxs = facesCubesIdxs;
         rotateCount = 0;
         face++;
+    } else {
+        requestAnimationFrame(animate);
     }
-
-    requestAnimationFrame(animate);
 };
 
-animate();
+// animate();
+
+
+document.getElementById('rotate90').addEventListener('click', () => {
+    animate();
+});
