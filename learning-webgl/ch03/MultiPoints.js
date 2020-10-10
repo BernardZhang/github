@@ -39,8 +39,8 @@ function main() {
 
     // 画点
     gl.drawArrays(gl.POINTS, 0, pointCount);
-    gl.drawArrays(gl.LINE_LOOP, 0, pointCount);
-    gl.drawArrays(gl.TRIANGLE_STRIP, 0, pointCount);
+    // gl.drawArrays(gl.LINE_LOOP, 0, pointCount);
+    // gl.drawArrays(gl.TRIANGLE_STRIP, 0, pointCount);
 }
 
 function initVertextBuffers(gl) {
