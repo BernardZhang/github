@@ -66,8 +66,14 @@ render(
             {
                 id: '1-3-1',
                 name: '授课7',
-                source: 3,
-                target: 1
+                source: 1,
+                target: 3
+            },
+            {
+                id: '1-3-2',
+                name: '授课8',
+                source: 1,
+                target: 3
             },
             {
                 id: '2-3',
@@ -105,7 +111,7 @@ render(
                 source: 3,
                 target: 2
             }
-        ].slice(0, 6)
+        ].slice(0, 13)
     }),
     document.body
 );

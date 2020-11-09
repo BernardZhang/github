@@ -124,7 +124,7 @@ Object.assign(Edge.prototype, {
         
         // let startPoint = [startX, startY];
         // let endPoint = [endX, endY];
-        const radius = (sourceNode.size || 30) + 10;
+        const radius = (sourceNode.size || 30) + 0;
         let moveDistance = 0;
         let middle = ~~(edgeCount / 2);
 
@@ -136,7 +136,10 @@ Object.assign(Edge.prototype, {
 
         console.log('moveDistance...', moveDistance, edgeIndex);
         
-        const angle = edgeCount === 1 ? Math.atan((endY - startY) / (endX - startX)) : (Math.PI / 12) * moveDistance;
+        // const angle = edgeCount === 1 ? Math.atan((endY - startY) / (endX - startX)) : (Math.PI / 12) * moveDistance;
+        const angle = Math.atan((endY - startY) / (endX - startX)) + (Math.PI / 12) * moveDistance;
+        let atan = Math.atan((endY - startY) / (endX - startX));
+        atan = atan < 0 ? Math.PI * 2 + atan : atan;
         let startPoint = [
             startX + radius * Math.cos(angle),
             startY + radius * Math.sin(angle)
@@ -145,6 +148,52 @@ Object.assign(Edge.prototype, {
             endX - radius * Math.cos(angle),
             endY + radius * Math.sin(angle)
         ];
+        console.log('atan...', atan);
+
+        if (atan <= Math.PI / 2) {
+            startPoint = [
+                startX + radius * Math.cos(angle),
+                startY + radius * Math.sin(angle)
+            ];
+            endPoint = [
+                endX - radius * Math.cos(angle),
+                endY - radius * Math.sin(angle)
+            ];
+        }
+
+        if (atan > Math.PI / 2 && atan < Math.PI) {
+            startPoint = [
+                startX - radius * Math.cos(angle),
+                startY - radius * Math.sin(angle)
+            ];
+            endPoint = [
+                endX + radius * Math.cos(angle),
+                endY + radius * Math.sin(angle)
+            ];
+        }
+
+        if (atan >= Math.PI && atan < Math.PI * 1.5) {
+            startPoint = [
+                startX - radius * Math.cos(angle),
+                startY + radius * Math.sin(angle)
+            ];
+            endPoint = [
+                endX + radius * Math.cos(angle),
+                endY - radius * Math.sin(angle)
+            ];
+        }
+
+        if (atan >= Math.PI * 1.5) {
+            startPoint = [
+                startX - radius * Math.cos(angle),
+                startY - radius * Math.sin(angle)
+            ];
+            endPoint = [
+                endX + radius * Math.cos(angle),
+                endY + radius * Math.sin(angle)
+            ];
+        }
+        console.log(angle, Math.cos(angle), Math.sin(angle));
         const centerPoint = [
             startPoint[0] + (endPoint[0] - startPoint[0]) / 2,
             startPoint[1] + (endPoint[1] - startPoint[1]) / 2
@@ -155,7 +204,7 @@ Object.assign(Edge.prototype, {
             // endPoint = movePoint(sourcePoint, targetPoint, targetPoint, moveDistance);
             const controlPoint = getControlPoint(startPoint, endPoint, 30 * moveDistance);
 
-            return [startPoint, controlPoint, endPoint];
+            // return [startPoint, controlPoint, endPoint];
         }
 
         return [startPoint, centerPoint, endPoint];
