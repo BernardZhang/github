@@ -2,3 +2,15 @@
     font-size: 13px;
     fill: grey;
 }
+
+.node-text {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 10px;
+    display: inline-block;
+    padding: 4px;
+    box-sizing: border-box;
+    text-align: center;
+}
