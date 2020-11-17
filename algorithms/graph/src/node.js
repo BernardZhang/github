@@ -11,7 +11,7 @@ G6.registerNode(
          */
         draw(cfg, group) {
             // console.log('draw...', cfg, group);
-            const { label, style } = cfg;
+            const { id, label, style } = cfg;
             const keyShape = group.addShape('circle', {
                 attrs: {
                     ...style,
@@ -33,7 +33,7 @@ G6.registerNode(
                     y: -30,
                     width: 60,
                     height: 60,
-                    html: `<span class="node-text">${label}</span>`
+                    html: `<span class="node-text">${label}(${id})</span>`
                 },
             });
 

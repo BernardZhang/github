@@ -2,12 +2,11 @@ import G6 from '@antv/g6';
 import { reduce } from 'lodash';
 import './node';
 import './edge';
-import data from './data';
+import data, { data1 } from './data';
 import './index.css';
 
 // 移除isInnerGroup===false的节点，并更新对应关系
 // A -> b -> C 移除b点并更新边：A -> C
-
 const removeEnterpriseNodes = data => {
     const { nodes, edges } = data;
     const removeNodes = nodes.filter(node => node.isInnerGroup === false);
@@ -26,6 +25,44 @@ const removeEnterpriseNodes = data => {
         };
         return acc;
     }, {});
+    let newOutEdges = [];
+    const getLinkedOutEdges = outEdges => {
+        // 目标节点为非行内集团企业的边，需要进一步连接起来，直到目标节点为行内集团企业
+        const needLinkedEdges = outEdges.filter(
+            ({ target }) => removeNodeIds.includes(target)
+        );
+        const generateLinkedEdges = inEdge => {
+            const nextOutEdges = edges.filter(({ source }) => source === inEdge.target);
+
+            nextOutEdges.forEach(nextOutEdge => {
+                const value = (inEdge.value * nextOutEdge.value) / 100;
+                const linkedEdge = {
+                    id: `e${inEdge.source}-${nextOutEdge.target}`,
+                    source: inEdge.source,
+                    target: nextOutEdge.target,
+                    value,
+                    label: `${value}%`,
+                    linkedEdges: [
+                        ...(inEdge.linkedEdges || []),
+                        nextOutEdge
+                    ]
+                };
+
+                // 如果下一个节点是非行内集团企业则继续连接边
+                if (removeNodeIds.includes(nextOutEdge.target)) {
+                    generateLinkedEdges(linkedEdge);
+                } else {
+                    newOutEdges.push(linkedEdge);
+                }
+            });
+        };
+
+        needLinkedEdges.forEach(inEdge => {
+            generateLinkedEdges(inEdge);
+        });
+
+        return newOutEdges;
+    };
 
     const newEdges = [];
     const newNodes = nodes.filter(({ id }) => !removeNodeIds.includes(id));
@@ -36,22 +73,39 @@ const removeEnterpriseNodes = data => {
 
     removeNodeIds.forEach(id => {
         const { inEdges, outEdges } = relatedEdgesMap[id];
+        const finalOutEdges = [
+            ...outEdges.filter(({ target }) => !removeNodeIds.includes(target)),
+            ...getLinkedOutEdges(outEdges)
+        ];
 
         inEdges.forEach(inEdge => {
-            outEdges.forEach(outEdge => {
+            finalOutEdges.forEach(outEdge => {
                 const value = (inEdge.value * outEdge.value) / 100;
+                const generateEdgeId = (inEdge, outEdge) => {
+                    let targetId = outEdge.target;
+
+                    if (outEdge.linkedEdges) {
+                        targetId = outEdge.linkedEdges.map(({ source, target }) => `${source}->${target}`).join('_');
+                    }
+
+                    return `e${inEdge.source}-${targetId}`;
+                };
                 newEdges.push({
-                    id: `e${inEdge.source}-${outEdge.target}`,
+                    id: generateEdgeId(inEdge, outEdge),
                     source: inEdge.source,
                     target: outEdge.target,
                     value,
-                    label: `间接持股${value}%`,
+                    label: `${value}%`,
                     originalEdges: [
                         inEdge,
                         outEdge
                     ],
                     style: {
-                        lineDash: [10, 5]
+                        lineDash: [10, 5],
+                        endArrow: true
+                    },
+                    labelCfg: {
+                        autoRotate: true
                     }
                 });
             });
@@ -176,22 +230,9 @@ const updateEdgesType = data => {
 };
 
 
-
 const graph = new G6.Graph({
   container: "container",
   renderer: 'svg',
-  layout: {
-    // type: 'force',
-    // padding: [160]
-    type: 'fruchterman',
-    // center: [200, 200], // The center of the graph by default
-    // gravity: 20,
-    // speed: 2,
-    // clustering: true,
-    // clusterGravity: 30,
-    // maxIteration: 2000,
-    // workerEnabled: true, // Whether to activate web-worker
-  },
   layout: {
     type: 'dagre',
     nodesepFunc: (d) => {
@@ -200,7 +241,7 @@ const graph = new G6.Graph({
         }
         return 20;
     },
-    ranksep: 30,
+    ranksep: 20,
     controlPoints: true,
   },
   width: window.innerWidth,
@@ -262,5 +303,7 @@ const generateGraphData = data => {
     return result;
 };
 
-graph.data(generateGraphData(data));
+const originalData = data1;
+
+graph.data(generateGraphData(originalData));
 graph.render();
