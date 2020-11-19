@@ -1,7 +1,7 @@
 import G6 from '@antv/g6';
-import { get, reduce, sumBy } from 'lodash';
-import { parse } from 'querystring';
-import { getControlPoint, adaptationNodes } from './utils';
+import { get, reduce, sumBy, minBy, maxBy, cloneDeep } from 'lodash';
+import { parse } from 'query-string';
+import { getControlPoint, adaptationNodes, fixedNum } from './utils';
 import './node';
 import './edge';
 import data, { dataMap } from './data';
@@ -46,7 +46,7 @@ const removeEnterpriseNodes = data => {
 
         return `e${inEdge.source}->${inEdge.target}->${targetId}`;
     };
-    const getLinkedOutEdges = outEdges  => {
+    const getLinkedOutEdges = outEdges => {
         const newOutEdges = [];
         // 目标节点为非行内集团企业的边，需要进一步连接起来，直到目标节点为行内集团企业
         const needLinkedEdges = outEdges.filter(
@@ -56,7 +56,7 @@ const removeEnterpriseNodes = data => {
             const nextOutEdges = edges.filter(({ source }) => source === inEdge.target);
 
             nextOutEdges.forEach(nextOutEdge => {
-                const value = (inEdge.value * nextOutEdge.value) / 100;
+                const value = fixedNum((inEdge.value * nextOutEdge.value) / 100);
                 const linkedEdge = {
                     id: generateEdgeId(inEdge, nextOutEdge),
                     source: inEdge.source,
@@ -105,8 +105,8 @@ const removeEnterpriseNodes = data => {
 
         inEdges.forEach(inEdge => {
             finalOutEdges.forEach(outEdge => {
-                const value = (inEdge.value * outEdge.value) / 100;
-               
+                const value = fixedNum((inEdge.value * outEdge.value) / 100);
+
                 newEdges.push({
                     id: generateEdgeId(inEdge, outEdge),
                     source: inEdge.source,
@@ -135,7 +135,7 @@ const removeEnterpriseNodes = data => {
             ...data.edges.filter(
                 ({ id, source, target }) => (relatedEdges.find(edge => edge.id !== id) && newNodesMap[source] && newNodesMap[target])
             ),
-            ...newEdges
+            ...mergeLinkedEdges(newEdges)
         ]
     };
 };
@@ -170,7 +170,8 @@ const mergeLinkedEdges = linkedEdges => reduce(
         return sameNodesEdgesMap;
     }, {}),
     (acc, mergeEdges) => {
-        const value = sumBy(mergeEdges, 'value');
+        const value = fixedNum(sumBy(mergeEdges, 'value'));
+
         acc = [
             ...acc,
             {
@@ -199,7 +200,7 @@ const removePersonNodes = data => {
             acc[edge.source] = acc[edge.source] || [];
             acc[edge.source].push(edge);
         }
-        
+
         return acc;
     }, {});
     const newEdges = [];
@@ -208,7 +209,7 @@ const removePersonNodes = data => {
         acc[id] = true;
         return acc;
     }, {});
-    let removeEdgeIds = []; 
+    let removeEdgeIds = [];
 
     for (const personNodeId in outEdgesMap) {
         const outEdges = outEdgesMap[personNodeId];
@@ -233,7 +234,7 @@ const removePersonNodes = data => {
                 };
 
                 newEdges.push({
-                    id: `e${source}-${target}`,
+                    id: `ep${source}-${target}`,
                     source,
                     target,
                     label: getRelationLabel(currentEdge, outEdges[j]),
@@ -248,9 +249,9 @@ const removePersonNodes = data => {
         nodes: newNodes,
         edges: [
             ...edges,
-            ...mergeLinkedEdges(newEdges)
+            ...newEdges
         ].filter(
-            ({ id, source, target }) => (!removeEdgeIds.includes(id)  && newNodesMap[source] && newNodesMap[target])
+            ({ id, source, target }) => (!removeEdgeIds.includes(id) && newNodesMap[source] && newNodesMap[target])
         )
     };
 };
@@ -334,65 +335,91 @@ const updateEdgesType = data => {
 };
 
 const graph = new G6.Graph({
-  container: 'container',
-  renderer: 'svg',
-  layout: {
-    type: 'dagre',
+    container: 'container',
+    renderer: 'svg',
     animate: true,
-    nodesepFunc: (d) => {
-        if (d.id === '3') {
-            return 50;
+    animateCfg: {
+        duration: 500, // Number，一次动画的时长
+        easing: 'linearEasing', // String，动画函数
+    },
+    layout: {
+        type: 'dagre',
+        minZoom: 0.2,
+        maxZoom: 5,
+        
+        // nodesepFunc: (d) => {
+        //     if (d.id === '3') {
+        //         return 50;
+        //     }
+        //     return 20;
+        // },
+        nodesep: 30,
+        ranksep: 30,
+        controlPoints: true,
+    },
+    modes: {
+        default: [
+            'drag-canvas',
+            'zoom-canvas',
+            'drag-node',
+            {
+                type: 'tooltip',
+                formatText(model) {
+                    return model.label;
+                },
+                offset: 10,
+            },
+        ],
+    },
+    fitView: true,
+    fitCenter: true,
+    fitViewPadding: 20,
+    //   linkCenter: true,
+    autoPaint: true,
+    width: window.innerWidth,
+    height: window.innerHeight,
+    defaultNode: {
+        size: 60,
+        type: 'enterprise',
+        style: {
+            lineWidth: 2,
+            stroke: '#5B8FF9',
+            fill: '#C6E5FF',
+        },
+    },
+    defaultEdge: {
+        //   type: 'flow-line',
+        type: 'polyline',
+        // type: 'line',
+        // type: 'cubic',
+        // type: 'quadratic',
+        // type: 'arc',
+        // type: 'cubic-vertical',
+        // type: 'cubic-horizontal',
+        style: {
+            radius: 20,
+            offset: 45,
+            endArrow: true,
+            lineWidth: 1,
+            stroke: '#C2C8D5'
         }
-        return 20;
-    },
-    ranksep: 50,
-    controlPoints: true,
-  },
-//   fitView: true,
-  fitCenter: true,
-  width: window.innerWidth,
-  height: window.innerHeight,
-  defaultNode: {
-    size: 50,
-    type: 'enterprise',
-    style: {
-      lineWidth: 2,
-      stroke: '#5B8FF9',
-      fill: '#C6E5FF',
-    },
-  },
-  defaultEdge: {
-    //   type: 'flow-line',
-    type: 'polyline',
-    // type: 'line',
-    // type: 'cubic',
-    // type: 'quadratic',
-    // type: 'arc',
-    // type: 'cubic-vertical',
-    // type: 'cubic-horizontal',
-    style: {
-      radius: 20,
-      offset: 45,
-      endArrow: true,
-      lineWidth: 1,
-      stroke: '#C2C8D5'
     }
-  }
 });
 
-graph.on('beforerender', evt => {
-    console.log('beforerender...', evt);
-    console.log('nodes...', graph.getNodes());
+
+window.graph = graph;
+
+graph.on('beforerender', () => {
+    console.log('beforerender...', graph.getNodes());
 });
 
-graph.on('afterrender', evt => {
-    console.log('afterrender...', evt);
-    const nodes = graph.getNodes();
-    console.log('nodes...', nodes);
+graph.on('afterrender', () => {
+    console.log('afterrender...', graph.getNodes());
 });
 
 const generateGraphData = data => {
     let result = data;
+    console.log('generateGraphData...', data);
 
     if (/format/.test(location.search)) {
         result = removeEnterpriseNodes(data);
@@ -411,5 +438,43 @@ const generateGraphData = data => {
 
 const originalData = dataMap[queryInfo.data] || data; // data1;
 
-graph.data(generateGraphData(originalData));
+const updateGraph = type => {
+    let data = cloneDeep(originalData);
+
+    switch (type) {
+        case 'original':
+            break;
+        case 'displayGraph':
+            data = removeEnterpriseNodes(data);
+            data = removePersonNodes(data);
+            break;
+        case 'invest':
+            data = removeEnterpriseNodes(data);
+            break;
+        case 'person':
+            data = removePersonNodes(data);
+            break;
+    }
+
+    graph.data(data);
+    graph.render();
+};
+
+graph.data(generateGraphData(cloneDeep(originalData)));
 graph.render();
+
+document.getElementById('original').addEventListener('click', evt => {
+    updateGraph(evt.target.getAttribute('id'));
+});
+
+document.getElementById('displayGraph').addEventListener('click', evt => {
+    updateGraph(evt.target.getAttribute('id'));
+});
+
+document.getElementById('invest').addEventListener('click', evt => {
+    updateGraph(evt.target.getAttribute('id'));
+});
+
+document.getElementById('person').addEventListener('click', evt => {
+    updateGraph(evt.target.getAttribute('id'));
+});

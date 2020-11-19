@@ -11,11 +11,11 @@ G6.registerNode(
          */
         draw(cfg, group) {
             // console.log('draw...', cfg, group);
-            const { id, label, style } = cfg;
+            const { id, label, style, size } = cfg;
             const keyShape = group.addShape('circle', {
                 attrs: {
                     ...style,
-                    r: 30,
+                    r: size / 2,
                     // fill: 'red',
                     // shadowOffsetX: 10,
                     // shadowOffsetY: 10,
@@ -29,11 +29,12 @@ G6.registerNode(
 
             group.addShape('dom', {
                 attrs: {
-                    x: -30,
-                    y: -30,
-                    width: 60,
-                    height: 60,
-                    html: `<span class="node-text">${label}(${id})</span>`
+                    x: -size / 2,
+                    y: -size / 2,
+                    width: size,
+                    height: size,
+                    html: `<span class="node-text">${label}</span>`
+                    // html: `<span class="node-text">${label}(${id})</span>`
                 },
             });
 

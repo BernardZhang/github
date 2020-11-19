@@ -212,8 +212,8 @@ export default {
             id: 'e6-9',
             source: '6',
             target: '9',
-            label: '80%',
-            value: 80,
+            label: '10%',
+            value: 10,
             labelType: 'invest'
         },
         {
@@ -446,8 +446,8 @@ export const data1 = {
             id: 'e6-9',
             source: '6',
             target: '9',
-            label: '80%',
-            value: 80,
+            label: '10%',
+            value: 10,
             labelType: 'invest'
         },
         {
@@ -470,16 +470,16 @@ export const data1 = {
             id: 'enode2-13',
             source: 'node2',
             target: '13',
-            label: '80%',
-            value: 80,
+            label: '50%',
+            value: 50,
             labelType: 'invest'
         },
         {
             id: 'e4-node3',
             source: '4',
             target: 'node3',
-            label: '80%',
-            value: 80,
+            label: '50%',
+            value: 50,
             labelType: 'invest'
         },
         {
@@ -576,7 +576,196 @@ export const case1 = {
     ].map(item => ({ label: item.value, ...item }))
 };
 
+export const data20 = {
+    nodes: new Array(20).fill({}).map((item, i) => {
+        const labelType = ['enterprise', 'person'][Math.random() < 0.8 ? 0 : 1];
+        const label = {
+            enterprise: '企业',
+            person: '人'
+        }[labelType];
+        const isInnerGroup = labelType === 'enterprise' && Math.random() < 0.7 ? true : false;
+
+        return {
+            id: `${i}`,
+            labelType,
+            label: `${label}${i}`,
+            isInnerGroup,
+            ...(isInnerGroup ? {
+                isCustomer: isInnerGroup && Math.random() < 0.8 ? true : false
+            } : {})
+        };
+    })
+};
+
+data20.nodes = updateNodesStyle(data20.nodes);
+data20.edges = data20.nodes.reduce((edges, node, idx, nodes) => {
+    const levelNodesCount = [1, 2, 3, 4, 5, 5];
+
+    const createEdge = (source, target) => {
+        const value = ~~(Math.random() * 100);
+
+        return {
+            id: `e${source.id}->${target.id}`,
+            source: source.id,
+            target: target.id,
+            labelType: 'invest',
+            label: `${value}%`,
+            value
+        };
+    };
+
+    // 一层
+    if (idx === 0) {
+        edges = [
+            ...edges,
+            ...nodes.slice(1, 3).map(target => createEdge(node, target))
+        ];
+    }
+
+    // 二层
+    if (idx === 1) {
+        edges = [
+            ...edges,
+            ...nodes.slice(3, 5).map(target => createEdge(node, target))
+        ];
+    }
+
+    if (idx === 2) {
+        edges = [
+            ...edges,
+            ...nodes.slice(5, 6).map(target => createEdge(node, target))
+        ];
+    }
+
+    // 三层
+    if (idx === 3) {
+        edges = [
+            ...edges,
+            ...nodes.slice(6, 10).map(target => createEdge(node, target))
+        ];
+    }
+
+    if (idx === 4) {
+        edges = [
+            ...edges,
+            ...nodes.slice(8, 10).map(target => createEdge(node, target))
+        ];
+    }
+
+    if (idx === 5) {
+        edges = [
+            ...edges,
+            ...nodes.slice(9, 10).map(target => createEdge(node, target))
+        ];
+    }
+
+    // 四层
+    if (idx === 6) {
+        edges = [
+            ...edges,
+            ...nodes.slice(10, 15).map(target => createEdge(node, target))
+        ];
+    }
+
+    if (idx === 7) {
+        edges = [
+            ...edges,
+            ...nodes.slice(12, 13).map(target => createEdge(node, target))
+        ];
+    }
+
+    if (idx === 8) {
+        edges = [
+            ...edges,
+            ...nodes.slice(13, 15).map(target => createEdge(node, target))
+        ];
+    }
+
+    if (idx === 9) {
+        edges = [
+            ...edges,
+            ...nodes.slice(14, 16).map(target => createEdge(node, target))
+        ];
+    }
+
+    // 五层
+    if (idx === 9) {
+        edges = [
+            ...edges,
+            ...nodes.slice(16, 19).map(target => createEdge(node, target))
+        ];
+    }
+
+    if (idx === 10) {
+        edges = [
+            ...edges,
+            ...nodes.slice(16, 19).map(target => createEdge(node, target))
+        ];
+    }
+
+    if (idx === 11) {
+        edges = [
+            ...edges,
+            ...nodes.slice(16, 18).map(target => createEdge(node, target))
+        ];
+    }
+
+    if (idx === 12) {
+        edges = [
+            ...edges,
+            ...nodes.slice(18, 19).map(target => createEdge(node, target))
+        ];
+    }
+
+    if (idx === 13) {
+        edges = [
+            ...edges,
+            ...nodes.slice(18, 20).map(target => createEdge(node, target))
+        ];
+    }
+
+    // 六层
+    // if (idx === 14) {
+    //     edges = [
+    //         ...edges,
+    //         ...nodes.slice(6, 10).map(target => createEdge(node, target))
+    //     ];
+    // }
+
+    // if (idx === 15) {
+    //     edges = [
+    //         ...edges,
+    //         ...nodes.slice(6, 10).map(target => createEdge(node, target))
+    //     ];
+    // }
+
+    // if (idx === 16) {
+    //     edges = [
+    //         ...edges,
+    //         ...nodes.slice(6, 10).map(target => createEdge(node, target))
+    //     ];
+    // }
+
+    // if (idx === 17) {
+    //     edges = [
+    //         ...edges,
+    //         ...nodes.slice(6, 10).map(target => createEdge(node, target))
+    //     ];
+    // }
+
+    // if (idx === 18) {
+    //     edges = [
+    //         ...edges,
+    //         ...nodes.slice(6, 10).map(target => createEdge(node, target))
+    //     ];
+    // }
+
+    return edges;
+}, []);
+
+
 export const dataMap = {
+    case1,
     data1,
-    case1
+    data20
 };

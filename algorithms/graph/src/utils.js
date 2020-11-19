@@ -1,3 +1,5 @@
+import { get } from 'lodash';
+
 export const getControlPoint = (startPoint, endPoint, moveDistance) => {
     const centerPoint = [
         startPoint[0] + (endPoint[0] - startPoint[0]) / 2,
@@ -18,4 +20,13 @@ export const getControlPoint = (startPoint, endPoint, moveDistance) => {
     //     centerPoint[0] - moveDistance * sinβ,
     //     centerPoint[1] + moveDistance * cosβ
     // ];
+};
+
+
+export const fixedNum = (num, count = 2) => {
+    if (get(num.toString().split('.'), '1', '').length > count) {
+        return +num.toFixed(count);
+    }
+
+    return num;
 };
