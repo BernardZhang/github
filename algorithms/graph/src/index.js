@@ -458,6 +458,7 @@ const updateGraph = type => {
 
     graph.data(data);
     graph.render();
+    // graph.paint();
 };
 
 graph.data(generateGraphData(cloneDeep(originalData)));

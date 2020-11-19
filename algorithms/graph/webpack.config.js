@@ -1,3 +1,4 @@
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = {
@@ -6,6 +7,7 @@ module.exports = {
     // entry: {
     //   index: './src/index.js'
     // },
+    devtool: 'inline-source-map',
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
         compress: false,
@@ -13,10 +15,24 @@ module.exports = {
     },
     module: {
         rules: [
+          // {
+          //   test: /\.m?js$/,
+          //   exclude: /(node_modules|bower_components)/,
+          //   use: {
+          //     loader: 'babel-loader'
+          //   }
+          // },
           {
             test: /\.css$/i,
             use: ['style-loader', 'css-loader']
           }
         ]
-    }
+    },
+    plugins: [
+      new HtmlWebpackPlugin({
+        filename: 'index.html',
+        template: 'src/index.html',
+        inject: true
+      })
+    ]
 };
