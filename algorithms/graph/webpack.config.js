@@ -11,17 +11,21 @@ module.exports = {
     devServer: {
         contentBase: path.join(__dirname, 'dist'),
         compress: false,
-        port: 9000
+        port: 9000,
+        host: '0.0.0.0'
     },
     module: {
         rules: [
-          // {
-          //   test: /\.m?js$/,
-          //   exclude: /(node_modules|bower_components)/,
-          //   use: {
-          //     loader: 'babel-loader'
-          //   }
-          // },
+          {
+            test: /\.m?js$/,
+            exclude: /(node_modules|bower_components)/,
+            use: {
+              loader: 'babel-loader',
+              options: {
+                presets: ['@babel/preset-env']
+              }
+            }
+          },
           {
             test: /\.css$/i,
             use: ['style-loader', 'css-loader']

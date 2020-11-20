@@ -19,6 +19,7 @@ body, div {
     box-sizing: border-box;
     text-align: center;
     user-select: none;
+    pointer-events: none;
 }
 
 .g6-tooltip {

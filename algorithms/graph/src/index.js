@@ -1,5 +1,6 @@
+// import 'babel-polyfill';
 import G6 from '@antv/g6';
-import { get, reduce, sumBy, minBy, maxBy, cloneDeep } from 'lodash';
+import { get, reduce, sumBy, minBy, maxBy, cloneDeep, uniqBy } from 'lodash';
 import { parse } from 'query-string';
 import { getControlPoint, adaptationNodes, fixedNum } from './utils';
 import './node';
@@ -239,7 +240,10 @@ const removePersonNodes = data => {
                     target,
                     label: getRelationLabel(currentEdge, outEdges[j]),
                     sourceEdges: [currentEdge, outEdges[j]],
-                    connectNode: nodes.find(({ id }) => id === personNodeId)
+                    connectNode: nodes.find(({ id }) => id === personNodeId),
+                    style: {
+                        endArrow: false
+                    }
                 });
             }
         }
@@ -291,32 +295,42 @@ const updateEdgesType = data => {
                 if (groupEdges.length === 1) {
                     acc[groupEdges[0].id] = {
                         type: 'quadratic',
+                        type: 'line',
+                        // type: 'arc',
+                        curveOffset: 100,
+                        curvePosition: 0.5,
+                        style: {
+                            stroke: 'red',
+                            endArrow: true
+                        },
+                        // label: '',
                         labelCfg: {
-                            autoRotate: true
+                            autoRotate: true,
+                            // color: 'transparent'
                         }
                     };
                 } else {
                     groupEdges.forEach(({ id }, index) => {
                         acc[id] = {
+                            type: 'arc',
                             type: 'quadratic',
-                            // curveOffset: 30 * ((index + 1) % 2 ? 1 : -1),
+                            // type: 'line',
+                            curveOffset: 30 * ((index + 1) % 2 ? 1 : -1),
                             curvePosition: (index + 1) * 0.3,
+                            curvePosition: 0.5,
+                            // ...(index === 0 ? {
+                            //     label: '',
+                            //     curveOffset: -60
+                            // } : {
+                            //     curveOffset: -30
+                            // }),
                             labelCfg: {
-                                autoRotate: true
+                                autoRotate: true,
+                                // color: index === 0 ? 'transparent' : '#000'
                             }
                         }
                     });
                 }
-                return acc;
-            }, acc);
-        }
-
-        return acc;
-    }, {});
-    const sameNodesEdgeIdsMap = reduce(sameNodesEdgesMap, (acc, cur) => {
-        if (cur.length > 2) {
-            (cur || []).reduce((acc, cur) => {
-                acc[cur.id] = true;
                 return acc;
             }, acc);
         }
@@ -329,12 +343,11 @@ const updateEdgesType = data => {
         edges: data.edges.map(edge => ({
             ...edge,
             ...(sameEdgesTypeMap[edge.id] || {})
-            // type: sameNodesEdgeIdsMap[edge.id] ? 'quadratic' : 'polyline'
         }))
     };
 };
 
-const graph = new G6.Graph({
+const createGraph = (cfg) => new G6.Graph({
     container: 'container',
     renderer: 'svg',
     animate: true,
@@ -346,13 +359,6 @@ const graph = new G6.Graph({
         type: 'dagre',
         minZoom: 0.2,
         maxZoom: 5,
-        
-        // nodesepFunc: (d) => {
-        //     if (d.id === '3') {
-        //         return 50;
-        //     }
-        //     return 20;
-        // },
         nodesep: 30,
         ranksep: 30,
         controlPoints: true,
@@ -402,20 +408,127 @@ const graph = new G6.Graph({
             endArrow: true,
             lineWidth: 1,
             stroke: '#C2C8D5'
+        },
+        labelCfg: {
+            autoRotate: true
         }
-    }
+    },
+    ...cfg
 });
 
+let graph = createGraph();
+let subGraph = null;
+let selectedEdge = null;
+
+const addGraphEventListeners = graph => {
+    window.graph = graph;
+
+    const onSelectEdge = edgeItem => {
+        const model = edgeItem.getModel();
+        const { linkedEdgesArray } = model;
+
+        if (!linkedEdgesArray) {
+            return;
+        }
+
+        selectedEdge && graph.clearItemStates(selectedEdge);
+        graph.setItemState(edgeItem, 'selected', true);
+        selectedEdge = edgeItem;
+
+        const subGraphEdges = linkedEdgesArray.reduce((acc, cur) => {
+            acc = [
+                ...acc,
+                ...(cur.reduce((acc, cur) => {
+                    if (cur.linkedEdges) {
+                        acc = [
+                            ...acc,
+                            ...cur.linkedEdges
+                        ];
+                    } else {
+                        acc = [
+                            ...acc,
+                            cur
+                        ];
+                    }
+                    return acc;
+                }, []))
+            ];
+            return acc;
+        }, []);
+        const nodesMap = (originalData.nodes || []).reduce((acc, cur) => {
+            acc[cur.id] = cur;
+    
+            return acc;
+        }, {});
+        const subGraphNodes = subGraphEdges.reduce((acc, { source, target }) => {
+            acc = [
+                ...acc,
+                nodesMap[source],
+                nodesMap[target]
+            ];
+    
+            return acc;
+        }, []);
+        const subGraphData = {
+            nodes: uniqBy(subGraphNodes, 'id'),
+            edges: uniqBy(subGraphEdges, 'id')
+        };
+
+        subGraph = subGraph || createGraph({
+            container: 'subGraph',
+            width: 320,
+            height: window.innerHeight,
+            fitView: false,
+            defaultEdge: {
+                // type: 'quadratic',
+                // type: 'polyline',
+                type: 'line',
+                // type: 'arc',
+                style: {
+                    radius: 30,
+                    offset: 50,
+                    endArrow: true,
+                    lineWidth: 1,
+                    stroke: '#C2C8D5'
+                },
+                labelCfg: {
+                    autoRotate: true
+                }
+            }
+        });
+    
+        console.log('linkedEdgesArray...', linkedEdgesArray, subGraphData);
+        subGraph.data(subGraphData);
+        subGraph.render();
+    };
+    
+    graph.on('click', evt => {
+        const item = evt.item;
+
+        if (item) {
+            if (item.get('type') === 'edge') {
+                onSelectEdge(item);
+            }
+        } else {
+            graph.clearItemStates(selectedEdge);
+            selectedEdge = null;
+            subGraph && subGraph.destroy();
+            subGraph = null;
+        }
+    });
+
+    graph.on('beforerender', () => {
+        console.log('beforerender...', graph.getNodes());
+    });
+    
+    graph.on('afterrender', () => {
+        console.log('afterrender...', graph.getNodes());
+    });
+};
+
+addGraphEventListeners(graph);
 
 window.graph = graph;
-
-graph.on('beforerender', () => {
-    console.log('beforerender...', graph.getNodes());
-});
-
-graph.on('afterrender', () => {
-    console.log('afterrender...', graph.getNodes());
-});
 
 const generateGraphData = data => {
     let result = data;
@@ -431,7 +544,7 @@ const generateGraphData = data => {
         console.log('removePersonNodes...', result);
     }
 
-    result = updateEdgesType(result);
+    // result = updateEdgesType(result);
 
     return result;
 };
@@ -456,13 +569,17 @@ const updateGraph = type => {
             break;
     }
 
+    graph.destroy();
+    graph = createGraph();
+
     graph.data(data);
     graph.render();
-    // graph.paint();
+    addGraphEventListeners(graph);
 };
 
 graph.data(generateGraphData(cloneDeep(originalData)));
 graph.render();
+
 
 document.getElementById('original').addEventListener('click', evt => {
     updateGraph(evt.target.getAttribute('id'));

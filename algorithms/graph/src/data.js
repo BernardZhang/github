@@ -493,6 +493,40 @@ export const data1 = {
     ]
 };
 
+export const data2 = {
+    ...data1,
+    edges: data1.edges.concat([
+        {
+            id: 'xe10-6',
+            source: '10',
+            target: '6',
+            label: '50%',
+            value: 50
+        },
+        {
+            id: 'xe2-8',
+            source: '2',
+            target: '8',
+            label: '50%',
+            value: 50
+        },
+        {
+            id: 'xe8-2',
+            source: '8',
+            target: '2',
+            label: '50%',
+            value: 50
+        },
+        {
+            id: 'xe3-6',
+            source: '3',
+            target: '6',
+            label: '50%',
+            value: 50
+        }
+    ])
+};
+
 export const case1 = {
     nodes: updateNodesStyle([
         {
@@ -573,6 +607,67 @@ export const case1 = {
             target: '6',
             value: 80
         }
+    ].map(item => ({ label: item.value, ...item }))
+};
+
+export const case2 = {
+    nodes: updateNodesStyle([
+        {
+            id: '1',
+            label: '企业A',
+            labelType: 'enterprise'
+        },
+        {
+            id: 'a',
+            label: 'a',
+            labelType: 'enterprise',
+            isInnerGroup: false
+        },
+        {
+            id: 'b',
+            label: 'b',
+            labelType: 'enterprise',
+            isInnerGroup: false
+        },
+        {
+            id: 'c',
+            label: 'c',
+            labelType: 'enterprise',
+            isInnerGroup: false
+        }
+    ]),
+    edges: [
+        {
+            id: 'e1',
+            source: '1',
+            target: 'a',
+            value: 80
+        },
+        {
+            id: 'e2',
+            source: '1',
+            target: 'a',
+            value: 30
+        },
+        {
+            id: 'e3',
+            source: 'a',
+            target: '1',
+            value: 80
+        },
+        {
+            id: 'e4',
+            source: '1',
+            target: 'c',
+            value: 80
+        },
+        {
+            id: 'e5',
+            source: 'a',
+            target: 'c',
+            value: 80,
+            type: 'quadratic'
+        },
     ].map(item => ({ label: item.value, ...item }))
 };
 
@@ -766,6 +861,8 @@ data20.edges = data20.nodes.reduce((edges, node, idx, nodes) => {
 
 export const dataMap = {
     case1,
+    case2,
     data1,
+    data2,
     data20
 };

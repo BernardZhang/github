@@ -6,17 +6,26 @@
                 width: 100%;
                 height: 100%;
             }
+            #subGraph {
+                position: fixed;
+                top: 0;
+                right: 0;
+                background: rgba(255,255,255,1);
+                box-shadow: rgba(213, 213, 213, 0.5) 0px 0px 10px 0px
+            }
         </style>
         <!-- <link href="./index.css" type="text/css" rel="stylesheet" /> -->
     </head>
     <body>
         <!-- <script type="module" src="./index.js"></script> -->
         <div id="container"></div>
+        <div id="subGraph"></div>
         <div class="toolbar">
             <button id="original">原始数据</button>
             <button id="displayGraph">显示图</button>
             <button id="invest">间接投资</button>
             <button id="person">共股东/高管</button>
         </div>
+        <!-- <script src="babel.polyfill.js"></script> -->
     </body>
 </html>

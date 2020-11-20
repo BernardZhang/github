@@ -33,8 +33,9 @@ G6.registerNode(
                     y: -size / 2,
                     width: size,
                     height: size,
-                    html: `<span class="node-text">${label}</span>`
-                    // html: `<span class="node-text">${label}(${id})</span>`
+                    style: 'pointer-events: none',
+                    // html: `<span class="node-text">${label}</span>`
+                    html: `<span class="node-text">${label}(${id})</span>`
                 },
             });
 
