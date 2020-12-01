@@ -220,8 +220,8 @@ const removePersonNodes = data => {
             ...outEdges.map(({ id }) => id)
         ];
 
-        for (let i = 0; i < outEdges.length - 1; i++) {
-            const currentEdge = outEdges[0];
+        for (let i = 0; i <= outEdges.length - 1; i++) {
+            const currentEdge = outEdges[i];
 
             for (let j = i + 1; j < outEdges.length; j++) {
                 const source = currentEdge.target;
@@ -242,7 +242,7 @@ const removePersonNodes = data => {
                     sourceEdges: [currentEdge, outEdges[j]],
                     connectNode: nodes.find(({ id }) => id === personNodeId),
                     style: {
-                        endArrow: false
+                        endArrow: true
                     }
                 });
             }
@@ -504,17 +504,23 @@ const addGraphEventListeners = graph => {
     
     graph.on('click', evt => {
         const item = evt.item;
+        console.log('click...', evt.name);
 
-        if (item) {
-            if (item.get('type') === 'edge') {
-                onSelectEdge(item);
-            }
-        } else {
-            graph.clearItemStates(selectedEdge);
+        // if (item) {
+        //     if (item.get('type') === 'edge') {
+        //         onSelectEdge(item);
+        //     }
+        // } else {
+            selectedEdge && graph.clearItemStates(selectedEdge);
             selectedEdge = null;
             subGraph && subGraph.destroy();
             subGraph = null;
-        }
+        // }
+    });
+
+    graph.on('edge:click', evt => {
+        console.log('edge:click...', evt.name);
+        onSelectEdge(evt.item);
     });
 
     graph.on('beforerender', () => {
