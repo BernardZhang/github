@@ -260,6 +260,49 @@ const removePersonNodes = data => {
     };
 };
 
+const getSubGraphData = edgeModel => {
+    const { linkedEdgesArray } = edgeModel;
+    const subGraphEdges = linkedEdgesArray.reduce((acc, cur) => {
+        acc = [
+            ...acc,
+            ...(cur.reduce((acc, cur) => {
+                if (cur.linkedEdges) {
+                    acc = [
+                        ...acc,
+                        ...cur.linkedEdges
+                    ];
+                } else {
+                    acc = [
+                        ...acc,
+                        cur
+                    ];
+                }
+                return acc;
+            }, []))
+        ];
+        return acc;
+    }, []);
+    const nodesMap = (originalData.nodes || []).reduce((acc, cur) => {
+        acc[cur.id] = cur;
+
+        return acc;
+    }, {});
+    const subGraphNodes = subGraphEdges.reduce((acc, { source, target }) => {
+        acc = [
+            ...acc,
+            nodesMap[source],
+            nodesMap[target]
+        ];
+
+        return acc;
+    }, []);
+
+    return {
+        nodes: uniqBy(subGraphNodes, 'id'),
+        edges: uniqBy(subGraphEdges, 'id')
+    };
+};
+
 // 两点之间有多条边时，使用弧线type: arc
 const updateEdgesType = data => {
     const sameNodesEdgesMap = data.edges.reduce((acc, edge) => {
@@ -391,7 +434,35 @@ const createGraph = (cfg) => new G6.Graph({
             lineWidth: 2,
             stroke: '#5B8FF9',
             fill: '#C6E5FF',
+            cursor: 'pointer'
         },
+        stateStyles: {
+            normal: {
+                fill: '#C6E5FF',
+                lineWidth: 1,
+                shadowBlur: 0,
+                shadowColor: 'rgb(95, 149, 255)',
+                stroke: 'rgb(95, 149, 255)',
+                strokeWidth: 1
+            },
+            selected: {
+                fill: '#C6E5FF',
+                lineWidth: 5,
+                shadowBlur: 10,
+                shadowColor: 'rgb(95, 149, 255)',
+                stroke: 'rgb(95, 149, 255)',
+                strokeWidth: 5
+            }
+        }
+    },
+    nodeStateStyles: {
+        hover: {                // hover 状态为 true 时的样式
+          fill: '#d3adf7'
+        },
+        selected: {              // running 状态为 true 时的样式
+          stroke: 'steelblue',
+          strokeWidth: 5
+        }
     },
     defaultEdge: {
         //   type: 'flow-line',
@@ -413,66 +484,54 @@ const createGraph = (cfg) => new G6.Graph({
             autoRotate: true
         }
     },
+    edgeStateStyles: {
+        selected: {
+            lineWidth: 2,
+            stroke: '#C6E5FF',
+            shadowBlur: 0,
+            filter: 'none'
+        }
+    },
     ...cfg
 });
 
 let graph = createGraph();
 let subGraph = null;
 let selectedEdge = null;
+let selectedNode = null;
 
 const addGraphEventListeners = graph => {
     window.graph = graph;
 
     const onSelectEdge = edgeItem => {
-        const model = edgeItem.getModel();
+        selectedEdge && graph.clearItemStates(selectedEdge);
+        selectedEdge && graph.updateItem(selectedEdge, {
+            labelCfg: {
+                style: {
+                    fontSize: 10
+                }
+            }
+        });
+        edgeItem && graph.setItemState(edgeItem, 'selected', true);
+        edgeItem && graph.updateItem(edgeItem, {
+            labelCfg: {
+                style: {
+                    fontSize: 14
+                }
+            }
+        });
+        selectedEdge = edgeItem;
+
+        
+
+        const model = edgeItem?.getModel() || {};
         const { linkedEdgesArray } = model;
 
         if (!linkedEdgesArray) {
             return;
         }
 
-        selectedEdge && graph.clearItemStates(selectedEdge);
-        graph.setItemState(edgeItem, 'selected', true);
-        selectedEdge = edgeItem;
-
-        const subGraphEdges = linkedEdgesArray.reduce((acc, cur) => {
-            acc = [
-                ...acc,
-                ...(cur.reduce((acc, cur) => {
-                    if (cur.linkedEdges) {
-                        acc = [
-                            ...acc,
-                            ...cur.linkedEdges
-                        ];
-                    } else {
-                        acc = [
-                            ...acc,
-                            cur
-                        ];
-                    }
-                    return acc;
-                }, []))
-            ];
-            return acc;
-        }, []);
-        const nodesMap = (originalData.nodes || []).reduce((acc, cur) => {
-            acc[cur.id] = cur;
-    
-            return acc;
-        }, {});
-        const subGraphNodes = subGraphEdges.reduce((acc, { source, target }) => {
-            acc = [
-                ...acc,
-                nodesMap[source],
-                nodesMap[target]
-            ];
-    
-            return acc;
-        }, []);
-        const subGraphData = {
-            nodes: uniqBy(subGraphNodes, 'id'),
-            edges: uniqBy(subGraphEdges, 'id')
-        };
+        const subGraphData = getSubGraphData(model);
 
         subGraph = subGraph || createGraph({
             container: 'subGraph',
@@ -501,26 +560,32 @@ const addGraphEventListeners = graph => {
         subGraph.data(subGraphData);
         subGraph.render();
     };
-    
+    const onSelectNode = nodeItem => {
+        selectedNode && graph.clearItemStates(selectedNode);
+        nodeItem && graph.setItemState(nodeItem, 'selected', true);
+        selectedNode = nodeItem;
+    };
+
     graph.on('click', evt => {
         const item = evt.item;
-        console.log('click...', evt.name);
 
-        // if (item) {
-        //     if (item.get('type') === 'edge') {
-        //         onSelectEdge(item);
-        //     }
-        // } else {
-            selectedEdge && graph.clearItemStates(selectedEdge);
-            selectedEdge = null;
+        if (!item || !item.get('type')) {
+            onSelectNode(null);
+            onSelectEdge(null);
+            
             subGraph && subGraph.destroy();
             subGraph = null;
-        // }
+        }
     });
 
     graph.on('edge:click', evt => {
         console.log('edge:click...', evt.name);
         onSelectEdge(evt.item);
+    });
+
+    graph.on('node:click', evt => {
+        console.log('node:click...', evt.name);
+        onSelectNode(evt.item);
     });
 
     graph.on('beforerender', () => {

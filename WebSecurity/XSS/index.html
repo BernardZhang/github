@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+	<html>
+	<head>
+		<title>DOM XSS</title>
+	</head>
+	<body>
+        <script>
+            var name = window.location.search.match(/name=([^&]*)/)?.[1];
+            document.write(decodeURI(name));
+        </script>
+	</body>
+</html>
