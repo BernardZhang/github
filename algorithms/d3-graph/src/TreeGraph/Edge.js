@@ -1,6 +1,6 @@
 import React from 'react';
 
-const getPath = (source, target, ranksep = 40) => {
+const getPath = (source, target, ranksep = 20) => {
     const startPoint = [source.x + source.width / 2, source.y + source.height];
     const endPoint = [target.x + target.width / 2, target.y - 12];
 
@@ -27,7 +27,7 @@ const getPath = (source, target, ranksep = 40) => {
     return `M${startPoint.join(',')}${controlPointsPath}L${endPoint.join(',')}`;
 };
 
-export default ({ edge, ranksep = 40, className = '', ...rest }) => {
+export default ({ edge, ranksep = 20, className = '', ...rest }) => {
     const { source, target } = edge;
 
     return (
@@ -41,15 +41,15 @@ export default ({ edge, ranksep = 40, className = '', ...rest }) => {
                 }}
                 {...rest}
             />
-            {/* <foreignObject
+            <foreignObject
                 className="edge-text"
                 width={40}
                 height={20}
                 x={edge.target.x + edge.target.width / 2 - 20}
                 y={edge.target.y - 40}
             >
-                <span>{edge.label}</span>
-            </foreignObject> */}
+                <span>{edge.label || '50%'}</span>
+            </foreignObject>
         </g>
     );
 };

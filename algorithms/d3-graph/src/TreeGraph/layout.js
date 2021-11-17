@@ -1,21 +1,26 @@
 import dagre from 'dagre';
 
+const nodeSize = {
+	width: 160,
+	height: 70
+};
+
 export const layout = data => {
-	const graph = new dagre.graphlib.Graph().setGraph({}).setDefaultEdgeLabel(() => {
+	const graph = new dagre.graphlib.Graph().setGraph({
+		nodesep: 30,
+		ranksep: 70,
+		// align: 'DR'
+	}).setDefaultEdgeLabel(() => {
 		return {};
 	});
 
 	data.nodes = data.nodes.map(node => ({
 		...node,
-		size: '120*60',
-		width: 120,
-		height: 60
-	}))
+		...nodeSize
+	}));
 
-	data.nodes.forEach((node) => {
-		const size = (node.size || '120*60').split('*');
-		const width = Number(size[0]);
-		const height = Number(size[1]);
+	data.nodes.forEach(node => {
+		const { width, height } = node;
 		graph.setNode(node.id, { width, height });
 	});
 	data.edges.forEach((edge) => {
@@ -61,16 +66,16 @@ export const dagreLayout = (data, { canvasWidth, canvasHeight }) => {
 }
 
 export const dagreLayoutRecursive = (data, { canvasWidth, canvasHeight }) => {
-    let graphData = data;
+	let graphData = data;
 
-    const graphList = [graphData];
+	const graphList = [graphData];
 
-    while (graphData.subGraph) {
-        graphList.push(graphData.subGraph);
-        graphData = graphData.subGraph;
-    }
+	while (graphData.subGraph) {
+		graphList.push(graphData.subGraph);
+		graphData = graphData.subGraph;
+	}
 
-    console.log('graphList...', graphList);
+	console.log('graphList...', graphList);
 	const graphs = graphList.map(graphData => layout(graphData));
 	let preMaxX = 0;
 
@@ -122,8 +127,9 @@ export const dagreLayoutRecursive = (data, { canvasWidth, canvasHeight }) => {
 		minY = Math.min(minY, node.y);
 		maxY = Math.max(maxY, node.y);
 	});
-	const offsetX = (canvasWidth - (maxX - minX + 240)) / 2;
-	const offsetY = (canvasHeight - (maxY - minY + 60)) / 2;
+	const offsetX = (canvasWidth - (maxX - minX + nodeSize.width * 2)) / 2;
+	const offsetY = (canvasHeight - (maxY - minY + nodeSize.height * 2)) / 2;
+	console.log('offsetX...', canvasWidth, maxX, minX)
 
 	const adjustY = (node, offsetY) => {
 		if (node.controller) {

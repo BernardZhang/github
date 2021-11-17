@@ -1,4 +1,4 @@
-import { Graph } from './Graph.js';
+import Graph from './Graph.js';
 
 const render = (component, dom) => {
     dom.innerHTML = component.render();

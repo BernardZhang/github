@@ -513,9 +513,228 @@ const data2 = {
   }))
 };
 
+const data3 = {
+  nodes: [
+    {
+      id: 1,
+      label: '中国建银投资有限责任公司浙江公司杭州分公公司余杭未来科技城余杭未来科技城',
+      labelType: 'enterprise',
+    },
+    {
+      id: 2,
+      label: '浙江东方龙旅游服务有限公司蚌埠分公司',
+      labelType: 'enterprise'
+    },
+    {
+      id: 3,
+      label: '马上消费金融有限公司',
+      labelType: 'enterprise'
+    },
+    {
+      id: 4,
+      label: '马上消费金融有限公司2',
+      labelType: 'enterprise'
+    },
+    {
+      id: 5,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    },
+    {
+      id: 6,
+      label: '企业名称Ab'
+    },
+    {
+      id: 7,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    },
+    {
+      id: 8,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    },
+    {
+      id: 9,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    },
+    {
+      id: 10,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    },
+    {
+      id: 11,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    },
+    {
+      id: 12,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    },
+    {
+      id: 13,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    },
+    {
+      id: 14,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    },
+    {
+      id: 15,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    },
+    {
+      id: 16,
+      label: '企业名称Ab',
+      labelType: 'enterprise'
+    }
+  ].map((item, index) => ({
+    ...item,
+    id: index + 1,
+    label: `${item.label}${index + 1}`
+  })),
+  edges: [
+    {
+      source: 1,
+      target: 2
+    },
+    {
+      source: 1,
+      target: 3
+    },
+    {
+      source: 1,
+      target: 4
+    },
+    {
+      source: 2,
+      target: 5
+    },
+    {
+      source: 2,
+      target: 6
+    },
+    {
+      source: 3,
+      target: 6,
+      isManual: true
+    },
+    {
+      source: 3,
+      target: 7
+    },
+    {
+      source: 3,
+      target: 8
+    },
+    {
+      source: 3,
+      target: 9,
+      isManual: true
+    },
+    {
+      source: 4,
+      target: 9
+    },
+    {
+      source: 4,
+      target: 10
+    },
+    {
+      source: 5,
+      target: 11
+    },
+    {
+      source: 5,
+      target: 12
+    },
+    {
+      source: 7,
+      target: 13
+    },
+    {
+      source: 7,
+      target: 14
+    },
+    {
+      source: 9,
+      target: 15
+    },
+    {
+      source: 11,
+      target: 12
+    },
+    {
+      source: 13,
+      target: 15
+    },
+    {
+      source: 13,
+      target: 16
+    },
+    {
+      source: 16,
+      target: 5
+    },
+    {
+      source: 15,
+      target: 14
+    }
+  ].map(item => ({
+    id: `${item.source}-${item.target}`,
+    ...item
+  }))
+};
+
+const data4 = {
+  nodes: new Array(10).fill({
+
+  }).map((item, index) => ({
+    id: index + 1,
+    label: index + 1
+  })),
+  edges: [
+    {
+      source: 5,
+      target: 6
+    },
+    {
+      source: 5,
+      target: 7
+    },
+    {
+      source: 5,
+      target: 8
+    },
+    {
+      source: 5,
+      target: 9
+    },
+    {
+      source: 1,
+      target: 5
+    },
+    {
+      source: 2,
+      target: 5
+    }
+  ].map(item => ({
+    id: `${item.source}-${item.target}`,
+    ...item
+  }))
+}
+
 export default data;
 
 export const dataMap = {
   data,
-  data2
+  data2,
+  data3,
+  data4
 };

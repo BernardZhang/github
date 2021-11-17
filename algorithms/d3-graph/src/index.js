@@ -15,7 +15,7 @@ const generateTreeGraph = (data, rootNodeId) => {
         acc[node.id] = node;
         return acc;
     }, {});
-    
+
     const rootNode = nodes.find(({ id }) => id === rootNodeId) || nodes[0];
     const nodesLevelMap = {
         [rootNode.id]: 1
@@ -60,7 +60,12 @@ const generateTreeGraph = (data, rootNodeId) => {
                 } else { // 访问过
                     // 层级有改变则该条边隐藏
                     if (level !== nodesLevelMap[target]) {
-                        hideEdges.push(edge);
+                        if (!hideEdges.includes(edge)) {
+                            hideEdges.push(edge);
+                            node.hideEdges = node.hideEdges || [];
+                            node.hideEdges.push(edge);
+                            console.log('hideEdges...', node, node.hideEdges);
+                        }
                     } else { // 层级无变化则该条边显示（参与图布局）
                         nextEdges.push(edge);
                     }
@@ -98,7 +103,9 @@ const generateTreeGraph = (data, rootNodeId) => {
                     nodesLevelMap[edge.source] = level;
                 } else {
                     if (level !== nodesLevelMap[edge.source]) {
-                        hideEdges.push(edge);
+                        if (!hideEdges.includes(edge)) {
+                            hideEdges.push(edge);
+                        }
                     } else {
                         preEdges.push(edge);
                     }
@@ -159,7 +166,7 @@ const generateTreeGraph = (data, rootNodeId) => {
     return graphData;
 };
 
-const data = dataMap[get(location.search.match(/data=(.+)/), '1', 'data')]; 
+const data = dataMap[get(location.search.match(/data=(.+)/), '1', 'data')];
 
 const TreeGraphDemo = () => {
     const [graphData, setGraphData] = useState(data);
@@ -184,7 +191,7 @@ const TreeGraphDemo = () => {
             <TreeGraph
                 data={graphData}
             />
-            <div class="toolbar">
+            <div className="toolbar">
                 <button id="original" onClick={update}>原始数据</button>
                 <button id="treeGraph" onClick={update}>TreeGraph(剪枝)</button>
             </div>

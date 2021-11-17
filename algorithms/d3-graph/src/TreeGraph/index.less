@@ -1,182 +1,219 @@
 @text-color: #fff;
 @primary-color: blue;
 
+.tree-graph-node {
+  width: 180px;
+  height: 70px;
+  // fill: #ff9845;
+  border-radius: 2px;
+}
+
+.nodes {
+  // opacity: 0.5;
+}
+
 .hide-edge {
-    // display: none;
-    &:hover {
-        fill: green;
-        path {
-            fill: green;
-            stroke: green;
-        }
+  // display: none;
+  &:hover {
+    // fill: green;
+    path {
+      // fill: green;
+      // stroke: green;
     }
+  }
 }
 
 .edge {
-    &:hover {
-        fill: red;
-        path {
-            stroke: red;
-        }
+  &:hover {
+    fill: red;
+    path {
+      stroke: red;
     }
-} 
+  }
+}
 
 .node-text {
-    text-align: center;
-    position: relative;
+  text-align: center;
+  position: relative;
+  overflow: visible;
 
-    & > span {
-        position: absolute;
-        display: inline-block;
-        width: 100%;
-        text-align: center;
-        left: 0;
-        top: 50%;
-        transform: translate(0, -50%);
-        font-size: 14px;
-        &.small-text {
-            font-size: 12px;
-        }
+  & > span {
+    position: absolute;
+    display: inline-block;
+    width: 100%;
+    max-height: 70px;
+    text-align: center;
+    left: 0;
+    top: 50%;
+    transform: translate(0, -50%);
+    font-size: 14px;
+    padding: 0 10px;
+    box-sizing: border-box;
+    // color: #ffffff;
+    color: #455064;
+    line-height: 20px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    &.small-text {
+      font-size: 12px;
     }
+  }
+  & > label {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    color: red;
+    font-size: 12px;
+    min-width: 16px;
+    height: 16px;
+    line-height: 16px;
+    background: #ffffff;
+    border: 1px solid #c9d2dd;
+    border-radius: 1px;
+    transform: translate(50%, 50%);
+  }
+}
+
+.edge-text {
+  & > span {
+    position: relative;
+    display: inline-block;
+    height: 100%;
+    width: 100%;
+    text-align: center;
+    font-size: 12px;
+    color: #455064;
+    font-weight: 400;
+    cursor: pointer;
+    background: #fff;
+  }
 }
 
 .equity-view-graph {
-    height: 100%;
-    cursor: move;
+  height: 100%;
+  cursor: move;
 
-    .node {
-        cursor: pointer;
-        .tree-node-toggle {
-            width: 14px;
-            height: 14px;
-            background: #FFFFFF;
-            border: 1px solid #C9D2DD;
-            border-radius: 50%;
-            display: inline-block;
-            position: relative;
-            z-index: 9;
-            cursor: pointer;
+  .node {
+    cursor: pointer;
+    .tree-node-toggle {
+      width: 14px;
+      height: 14px;
+      background: #ffffff;
+      border: 1px solid #c9d2dd;
+      border-radius: 50%;
+      display: inline-block;
+      position: relative;
+      z-index: 9;
+      cursor: pointer;
 
-            &:after,
-            &:before {
-                position: absolute;
-                content: "";
-                height: 1px;
-                width: 8px;
-                background: #C9D2DD;
-                left: 50%;
-                top: 50%;
-                transform: translate(-50%, -50%);
-            }
+      &:after,
+      &:before {
+        position: absolute;
+        content: "";
+        height: 1px;
+        width: 8px;
+        background: #c9d2dd;
+        left: 50%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+      }
 
-            &:before {
-                height: 8px;
-                width: 1px;
-            }
+      &:before {
+        height: 8px;
+        width: 1px;
+      }
 
-            &.expanded {
-                &:before {
-                    display: none;
-                }
-            }
-        }
-    }
-    
-    .root-node {
-        .node-text {
-            color: #fff;
-        }
-    }
-
-    .node-text {
-        color: @text-color;
-        
-    }
-
-    .edge-text {
-        & > span {
-            display: inline-block;
-            height: 100%;
-            width: 100%;
-            text-align: center;
-            font-size: 12px;
-            color: @primary-color;
-            font-weight: 400;
-            cursor: pointer;
-            background: #fff;
-        }
-    }
-
-    .root-top-expand {
-        display: inline-block;
-        width: 100%;
-        height: 100%;
-        background: @primary-color;
-        border-radius: 50%;
-        text-align: center;
-        color: #fff;
-        z-index: 9;
-        position: relative;
-        cursor: pointer;
-
-        &.expanded {
-            &:after {
-                display: none;
-            }
-        }
-
-        &:before,
-        &:after {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            content: "";
-            background: #fff;
-            transform: translate(-50%, -50%);
-        }
+      &.expanded {
         &:before {
-            width: 9px;
-            height: 1px;
+          display: none;
         }
-        &:after {
-            width: 1px;
-            height: 9px;
-        }
+      }
     }
+  }
+
+  .root-node {
+    .node-text {
+      color: #fff;
+    }
+  }
+
+  .node-text {
+    color: @text-color;
+  }
+
+  .root-top-expand {
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background: @primary-color;
+    border-radius: 50%;
+    text-align: center;
+    color: #fff;
+    z-index: 9;
+    position: relative;
+    cursor: pointer;
+
+    &.expanded {
+      &:after {
+        display: none;
+      }
+    }
+
+    &:before,
+    &:after {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      content: "";
+      background: #fff;
+      transform: translate(-50%, -50%);
+    }
+    &:before {
+      width: 9px;
+      height: 1px;
+    }
+    &:after {
+      width: 1px;
+      height: 9px;
+    }
+  }
 }
 
 .link-flow-in {
-    stroke-dasharray: 8;
-    -webkit-animation: dash-line 30s linear infinite;
-    animation: dash-line 30s linear infinite
+  stroke-dasharray: 8;
+  -webkit-animation: dash-line 30s linear infinite;
+  animation: dash-line 30s linear infinite;
 }
 
 .link-flow-out {
-    stroke-dasharray: 8;
-    stroke: @primary-color;
-    animation: dash-line 20s linear infinite reverse
+  stroke-dasharray: 8;
+  stroke: @primary-color;
+  animation: dash-line 20s linear infinite reverse;
 }
 
 @-webkit-keyframes dash-line {
-    to {
-        stroke-dashoffset: 1000
-    }
+  to {
+    stroke-dashoffset: 1000;
+  }
 }
 
 @keyframes dash-line {
-    to {
-        stroke-dashoffset: 1000
-    }
+  to {
+    stroke-dashoffset: 1000;
+  }
 }
 
 .group-graph-equity-view-tip {
-    background: #F4F4FE;
-    // box-shadow: @light-box-shadow;
-    padding: 6px 10px;
-    color: @text-color;
-    font-size: 12px;
-    line-height: 18px;
-    label {
-        // color: @text-secondary-color;
-    }
+  background: #f4f4fe;
+  // box-shadow: @light-box-shadow;
+  padding: 6px 10px;
+  color: @text-color;
+  font-size: 12px;
+  line-height: 18px;
+  label {
+    // color: @text-secondary-color;
+  }
 }

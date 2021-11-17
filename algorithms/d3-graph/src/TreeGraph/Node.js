@@ -6,13 +6,14 @@ export default ({
 }) => (
     <g
         key={node.id}
-        fill="lightblue"
+        fill="#fff"
+        className="tree-graph-node"
         transform={`translate(${node.x}, ${node.y})`}
     >
         <rect
             rx="2"
             ry="2"
-            stroke="#CCD9FD"
+            stroke="#5E7092"
             width={node.width}
             height={node.height}
         />
@@ -22,6 +23,11 @@ export default ({
             height={node.height}
         >
             <span>{node.label}</span>
+            {
+                node.hideEdges?.length > 0 && (
+                    <label>{node.hideEdges.length}</label>
+                )
+            }
         </foreignObject>
         {children}
     </g>
