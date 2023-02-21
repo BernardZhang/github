@@ -15,7 +15,9 @@ G6.registerNode(
             const keyShape = group.addShape('circle', {
                 attrs: {
                     ...style,
+                    class: cfg.isInnerGroup === false ? 'not-inner-group' : '',
                     r: size / 2,
+                    strokeDasharray: [5, 5],
                     // fill: 'red',
                     // shadowOffsetX: 10,
                     // shadowOffsetY: 10,
@@ -36,7 +38,8 @@ G6.registerNode(
                     style: 'pointer-events: none',
                     // html: `<span class="node-text">${label}</span>`
                     // html: `<span class="node-text">${label}(${id})-${hideEdges?.length || 0}</span>`
-                    html: `<span class="node-text">${label}(${hideEdges?.length || 0})</span>`
+                    // html: `<span class="node-text">${label}(${hideEdges?.length || 0})</span>`
+                    html: `<span class="node-text ${cfg.isInnerGroup === false ? 'not-inner-group' : ''} ${cfg.labelType}">${label}</span>`
                 },
             });
 

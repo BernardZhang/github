@@ -1,0 +1,5 @@
+total 24
+-rw-r--r--  1 zhangyou  staff  185 12 21 19:10 awk.sh
+-rw-r--r--@ 1 zhangyou  staff  514  9 16 13:31 basic.sh
+-rw-r--r--  1 zhangyou  staff    0 12 21 19:10 demo.txt
+-rw-r--r--@ 1 zhangyou  staff  228 12 21 10:22 ifelse.sh

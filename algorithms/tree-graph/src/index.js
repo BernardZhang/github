@@ -432,8 +432,8 @@ const createGraph = (cfg) => new G6.Graph({
         type: 'enterprise',
         style: {
             lineWidth: 2,
-            stroke: '#5B8FF9',
-            fill: '#C6E5FF',
+            stroke: '#2e68ff',
+            fill: '#2e68ff',
             cursor: 'pointer'
         },
         stateStyles: {
@@ -457,11 +457,11 @@ const createGraph = (cfg) => new G6.Graph({
     },
     nodeStateStyles: {
         hover: {                // hover 状态为 true 时的样式
-          fill: '#d3adf7'
+            fill: '#d3adf7'
         },
         selected: {              // running 状态为 true 时的样式
-          stroke: 'steelblue',
-          strokeWidth: 5
+            stroke: '#2e68ff',
+            strokeWidth: 2
         }
     },
     defaultEdge: {
@@ -486,8 +486,8 @@ const createGraph = (cfg) => new G6.Graph({
     },
     edgeStateStyles: {
         selected: {
-            lineWidth: 2,
-            stroke: '#C6E5FF',
+            lineWidth: 1,
+            stroke: 'red',
             shadowBlur: 0,
             filter: 'none'
         }
@@ -512,7 +512,7 @@ const drawHideEdges = ({ x, y, hideEdges }, graph) => {
 
     const namespaceURI = 'http://www.w3.org/2000/svg';
     const svg = hideEdgesSvg = hideEdgesSvg || document.createElementNS(namespaceURI, 'svg');
-    
+
     const lines = hideEdges.map(({ source, target }) => {
         const sourceNode = nodesMap[source];
         const targetNode = nodesMap[target];
@@ -524,7 +524,7 @@ const drawHideEdges = ({ x, y, hideEdges }, graph) => {
         line.setAttribute('style', 'stroke:rgba(255,0,0, .65);stroke-width:1');
         return line;
     });
-    
+
     svg.setAttribute('style', 'position: absolute; top: 30px; left: 368px;z-index: -1;');
     svg.setAttribute('width', window.innerWidth);
     svg.setAttribute('height', window.innerHeight);
@@ -558,7 +558,7 @@ const addGraphEventListeners = graph => {
         });
         selectedEdge = edgeItem;
 
-        
+
 
         const model = edgeItem?.getModel() || {};
         const { linkedEdgesArray } = model;
@@ -591,7 +591,7 @@ const addGraphEventListeners = graph => {
                 }
             }
         });
-    
+
         console.log('linkedEdgesArray...', linkedEdgesArray, subGraphData);
         subGraph.data(subGraphData);
         subGraph.render();
@@ -608,7 +608,7 @@ const addGraphEventListeners = graph => {
         if (!item || !item.get('type')) {
             onSelectNode(null);
             onSelectEdge(null);
-            
+
             subGraph && subGraph.destroy();
             subGraph = null;
         }
@@ -630,7 +630,7 @@ const addGraphEventListeners = graph => {
     graph.on('beforerender', () => {
         console.log('beforerender...', graph.getNodes());
     });
-    
+
     graph.on('afterrender', () => {
         console.log('afterrender...', graph.getNodes());
     });
@@ -669,7 +669,7 @@ const generateTreeGraph = (data, rootNodeId) => {
         acc[edge.id] = edge;
         return acc;
     }, {});
-    
+
     const rootNode = nodes.find(({ id }) => id === rootNodeId);
     const nodesLevelMap = {
         [rootNodeId]: 1
@@ -687,7 +687,7 @@ const generateTreeGraph = (data, rootNodeId) => {
         }
         return acc;
     }, { inEdges: [], outEdges: [] });
-    
+
 
     let nextLevelNodes = [rootNode];
     const buildEdges = (outEdges, currentNode) => outEdges.reduce((acc, outEdge) => {
@@ -808,7 +808,7 @@ export const getDataByDeep = (data, deepLevel = 4, topNode) => {
             node => nodeIds.includes(node.id)
         ).map(node => ({
             ...node,
-            expanded: investEdgesTargetNodesMap[node.id] ? false : nodesLevelMap[node.id] !== maxLevel ,
+            expanded: investEdgesTargetNodesMap[node.id] ? false : nodesLevelMap[node.id] !== maxLevel,
             // 最后一层节点或有投资指向的节点需要展开操作
             showExpand: nodesLevelMap[node.id] === maxLevel || investEdgesTargetNodesMap[node.id],
             level: nodesLevelMap[node.id]
