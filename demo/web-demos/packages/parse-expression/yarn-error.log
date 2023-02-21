@@ -1,0 +1,29 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/bin/yarn add @babel/parser
+
+PATH: 
+  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+
+Yarn version: 
+  1.22.17
+
+Node version: 
+  16.13.1
+
+Platform: 
+  darwin x64
+
+Trace: 
+  Error: https://registry.npmjs.org/@babel%2fparser: ETIMEDOUT
+      at Timeout._onTimeout (/usr/local/lib/node_modules/yarn/lib/cli.js:141543:19)
+      at listOnTimeout (node:internal/timers:557:17)
+      at processTimers (node:internal/timers:500:7)
+
+npm manifest: 
+  No manifest
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

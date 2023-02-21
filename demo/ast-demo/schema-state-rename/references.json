@@ -1,0 +1,250 @@
+{
+  "page1": {
+    "props": {
+      "onMount": [
+        {
+          "funcBody": "queryModels.trigger().then(models => {\n  searchModels.setValue(models);\n  importModels.setValue(models);\n});",
+          "variables": [
+            "queryModels",
+            "searchModels",
+            "importModels"
+          ]
+        }
+      ]
+    }
+  },
+  "queryForm1": {},
+  "formItem1": {},
+  "select2": {
+    "props": {
+      "onChange": [
+        {
+          "funcBody": "queryForm1.setFieldsValue({\n  modelVersion: undefined\n});\n\nqueryModelVersions.trigger({\n  data: {\n    code: searchModels.value?.find(item => item.value === value)?.code\n  }\n}).then(modelVersions => {\n  importModelVersions.setValue(modelVersions);\n});",
+          "variables": [
+            "queryModelVersions",
+            "searchModels",
+            "importModelVersions"
+          ]
+        }
+      ],
+      "options": [
+        {
+          "expression": "searchModels.value",
+          "variables": [
+            "searchModels"
+          ]
+        }
+      ],
+      "onSearch": [
+        {
+          "funcBody": "queryModels.trigger({\n  params: {\n    name: value\n  }\n});\n",
+          "variables": [
+            "queryModels"
+          ]
+        }
+      ]
+    }
+  },
+  "formItem2": {},
+  "select1": {
+    "props": {
+      "options": [
+        {
+          "expression": "queryModelVersions.data || []",
+          "variables": [
+            "queryModelVersions"
+          ]
+        }
+      ]
+    }
+  },
+  "table1": {
+    "props": {
+      "onChange": [
+        {
+          "funcBody": "console.log('pagination...', pagination, filters, sorter, extra);\n\nqueryVariables.trigger({\n  data: {\n    curPage: pagination?.current || 1,\n    pageSize: pagination?.pageSize || 10,\n    ...queryForm1.values\n  }\n});\n",
+          "variables": [
+            "queryVariables"
+          ]
+        }
+      ],
+      "loading": [
+        {
+          "expression": "queryVariables.isFetching",
+          "variables": [
+            "queryVariables"
+          ]
+        }
+      ],
+      "dataSource": [
+        {
+          "expression": "queryVariables.data?.data || []",
+          "variables": [
+            "queryVariables"
+          ]
+        }
+      ]
+    }
+  },
+  "modal3": {},
+  "layerPage1": {
+    "props": {
+      "visible": [
+        {
+          "expression": "!!currentRecord.value",
+          "variables": [
+            "currentRecord"
+          ]
+        }
+      ],
+      "title": [
+        {
+          "expression": "currentRecord.value?.modelName",
+          "variables": [
+            "currentRecord"
+          ]
+        }
+      ]
+    }
+  },
+  "table2": {
+    "props": {
+      "onChange": [
+        {
+          "funcBody": "queryVariableDetail.trigger({\n  data: {\n    pageSize: pagination?.pageSize || 10,\n    curPage: pagination?.current || 1\n  }\n}).then(detail => {\n  currentRecord.setValue({\n    ...currentRecord.value,\n    data: detail\n  });\n});\n",
+          "variables": [
+            "queryVariableDetail",
+            "currentRecord",
+            "currentRecord"
+          ]
+        }
+      ],
+      "loading": [
+        {
+          "expression": "queryVariableDetail.isFetching",
+          "variables": [
+            "queryVariableDetail"
+          ]
+        }
+      ],
+      "dataSource": [
+        {
+          "expression": "currentRecord.value?.data?.data || []",
+          "variables": [
+            "currentRecord"
+          ]
+        }
+      ]
+    }
+  },
+  "modal1": {
+    "props": {
+      "visible": [
+        {
+          "expression": "importModalVisible.value",
+          "variables": [
+            "importModalVisible"
+          ]
+        }
+      ],
+      "onOk": [
+        {
+          "funcBody": "form1.submit();",
+          "variables": []
+        }
+      ]
+    }
+  },
+  "form1": {
+    "props": {
+      "onSubmit": [
+        {
+          "funcBody": "const values = form1.values;\nconst { uuid, code } = importModels.value?.find(({ value }) => values.modelName) || {};\n\nimportVariables.trigger({\n  data: {\n      ...values,\n    modelCode: code,\n    modelUuid: uuid,\n    variableFile: values.variableFile?.file\n  }\n}).then(() => {\n  message.success('导入成功');\n  queryVariables.trigger();\n  importModalVisible.setValue(false);\n});",
+          "variables": [
+            "importModels",
+            "importVariables",
+            "queryVariables",
+            "importModalVisible"
+          ]
+        }
+      ]
+    }
+  },
+  "button4": {
+    "props": {
+      "onClick": [
+        {
+          "funcBody": "window.open(`${location.origin}/modelexApi/variable/download/templateOfCsv`, '_blank');",
+          "variables": []
+        }
+      ]
+    }
+  },
+  "formItem3": {},
+  "select4": {
+    "props": {
+      "onChange": [
+        {
+          "funcBody": "form1.setFieldsValue({\n  modelVersion: undefined\n});\n\nqueryModelVersions.trigger({\n  data: {\n    code: importModels.value?.find(item => item.value === value)?.code\n  }\n}).then(modelVersions => {\n  importModelVersions.setValue(modelVersions);\n});\n",
+          "variables": [
+            "queryModelVersions",
+            "importModels",
+            "importModelVersions"
+          ]
+        }
+      ],
+      "options": [
+        {
+          "expression": "importModels.value || []",
+          "variables": [
+            "importModels"
+          ]
+        }
+      ],
+      "onSearch": [
+        {
+          "funcBody": "queryModels.trigger({\n  data: {\n    name: value\n  }\n}).then(models => {\n  importModels.setValue(models);\n})",
+          "variables": [
+            "queryModels",
+            "importModels"
+          ]
+        }
+      ]
+    }
+  },
+  "formItem4": {},
+  "select5": {
+    "props": {
+      "options": [
+        {
+          "expression": "importModelVersions.value || []",
+          "variables": [
+            "importModelVersions"
+          ]
+        }
+      ]
+    }
+  },
+  "formItem5": {},
+  "upload1": {
+    "props": {
+      "onChange": [
+        {
+          "funcBody": "console.log('file change...', file, fileList);\nform1.setFieldsValue({\n  variableFile: file\n});",
+          "variables": []
+        }
+      ]
+    }
+  },
+  "button3": {}
+}
+
+{
+    queryModels: [
+        {
+            compoentUuid: 'page1',
+            type: 'props',
+            key: 'onMount'    
+        }
+    ]
+}

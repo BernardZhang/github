@@ -1,0 +1,7 @@
+{
+  "presets": ["@babel/env", "@babel/preset-react"],
+  "plugins": [["css-modules-transform", {
+    "extensions": [".less"] ,
+    "generateScopedName": "hello-component-[local]"
+  }]]
+}

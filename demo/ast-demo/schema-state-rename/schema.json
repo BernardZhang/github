@@ -1,0 +1,1517 @@
+{
+  "uuid": "d1f1d135adfa41b48a3fb530cf16624d",
+  "name": "变量库",
+  "type": null,
+  "dataSourceMap": {
+    "566c72c5b5ca4151824bc6559af373d0": {
+      "bodyType": "json",
+      "headers": [
+        {
+          "value": "{{sessionStorage.getItem('_csrf_')}}",
+          "key": "X-Cf-Random"
+        }
+      ],
+      "baseUrl": "http://127.0.0.1:8201/modelexApi",
+      "enableTransformer": true,
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "return data?.data;"
+      },
+      "enabledTransformer": true,
+      "events": [
+        {
+          "waitType": "debounce",
+          "enableWait": false,
+          "waitMs": 10,
+          "_$t_$": "action",
+          "type": "script",
+          "params": {
+            "src": "message.error(error?.message || error?.toString() || '未知错误');"
+          },
+          "event": "onFailure",
+          "enabled": true
+        }
+      ],
+      "interceptors": [
+        {
+          "_$t_$": "functionBody",
+          "funcBody": "const { data } = response || {};\nconsole.log('response...', response);\nif (data?.success === false) {\n  return Promise.reject(data);\n}\n\nreturn response;"
+        }
+      ]
+    }
+  },
+  "elements": {},
+  "codes": [
+    {
+      "id": "importModalVisible",
+      "type": "state"
+    },
+    {
+      "id": "currentRecord",
+      "type": "state"
+    },
+    {
+      "bodyType": "json",
+      "queryTimeout": 100000,
+      "enableTransformer": false,
+      "dataSourceUuid": "566c72c5b5ca4151824bc6559af373d0",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "// type your code here\n// example: return data.filter(({ quantity }) => quantity > 20)\nreturn data"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [
+        {
+          "value": "{{queryVariables.data?.curPage || 1}}",
+          "key": "curPage"
+        },
+        {
+          "value": "{{queryVariables.data?.pageSize || 10}}",
+          "key": "pageSize"
+        },
+        {
+          "value": "{{queryForm1.values?.modelName}}",
+          "key": "modelName"
+        },
+        {
+          "value": "{{queryForm1.values?.modelVersion}}",
+          "key": "modelVersion"
+        }
+      ],
+      "runWhenPageLoads": true,
+      "cookies": [],
+      "methodType": "POST",
+      "id": "queryVariables",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/variable/repo/queryPageList",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "bodyType": "json",
+      "queryTimeout": 100000,
+      "enableTransformer": false,
+      "dataSourceUuid": "566c72c5b5ca4151824bc6559af373d0",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "// type your code here\n// example: return data.filter(({ quantity }) => quantity > 20)\nreturn data"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [],
+      "runWhenPageLoads": false,
+      "cookies": [],
+      "methodType": "POST",
+      "id": "queryVariableDetail",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/variable/repo/detail",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "bodyType": "form-data",
+      "queryTimeout": 100000,
+      "enableTransformer": false,
+      "dataSourceUuid": "566c72c5b5ca4151824bc6559af373d0",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "// type your code here\n// example: return data.filter(({ quantity }) => quantity > 20)\nreturn data"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [],
+      "runWhenPageLoads": false,
+      "cookies": [],
+      "methodType": "POST",
+      "id": "importVariables",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/variable/repo/import",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "bodyType": "none",
+      "queryTimeout": 100000,
+      "enableTransformer": true,
+      "dataSourceUuid": "566c72c5b5ca4151824bc6559af373d0",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "// type your code here\n// example: return data.filter(({ quantity }) => quantity > 20)\nreturn {\n  fileBlob: data,\n  fileName: response?.headers?.['content-disposition']?.match(/filename=\"(.*)\"/i)?.[1]\n};"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [],
+      "runWhenPageLoads": false,
+      "cookies": [],
+      "methodType": "GET",
+      "id": "exportVariables",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/variable/repo/export",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "bodyType": "json",
+      "queryTimeout": 100000,
+      "enableTransformer": true,
+      "dataSourceUuid": "566c72c5b5ca4151824bc6559af373d0",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "// type your code here\n// example: return data.filter(({ quantity }) => quantity > 20)\nreturn (data?.data?.data || []).map(({ uuid, code, name }) => ({\n  label: name,\n  value: name,\n  uuid,\n  code\n}));"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [
+        {
+          "value": 1,
+          "key": "curPage"
+        },
+        {
+          "value": 100,
+          "key": "pageSize"
+        },
+        {
+          "value": 3,
+          "key": "type"
+        }
+      ],
+      "runWhenPageLoads": false,
+      "cookies": [],
+      "methodType": "POST",
+      "id": "queryModels",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/model/getMyParticipateList",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "bodyType": "json",
+      "queryTimeout": 100000,
+      "enableTransformer": true,
+      "dataSourceUuid": "566c72c5b5ca4151824bc6559af373d0",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "// type your code here\n// example: return data.filter(({ quantity }) => quantity > 20)\nconsole.log('data...', data);\nreturn data?.data?.map(({ name, version }) => ({\n  label: version,\n  value: version\n}));"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [],
+      "runWhenPageLoads": false,
+      "cookies": [],
+      "methodType": "POST",
+      "id": "queryModelVersions",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/model/getModelVersionList",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "id": "importModels",
+      "type": "state"
+    },
+    {
+      "id": "importModelVersions",
+      "type": "state"
+    },
+    {
+      "id": "searchModels",
+      "type": "state",
+      "value": []
+    },
+    {
+      "id": "searchModelVersions",
+      "type": "state",
+      "value": []
+    }
+  ],
+  "componentsTree": {
+    "uuid": "page1",
+    "layout": {
+      "type": "flow"
+    },
+    "name": "Page",
+    "condition": true,
+    "props": {
+      "onMount": [
+        {
+          "waitType": "debounce",
+          "args": [],
+          "enableWait": true,
+          "waitMs": 100,
+          "method": "trigger",
+          "targetId": "queryVariables",
+          "_$t_$": "action",
+          "type": "script",
+          "params": {
+            "src": "queryModels.trigger().then(models => {\n  searchModels.setValue(models);\n  importModels.setValue(models);\n});"
+          },
+          "event": "onMount",
+          "enabled": true
+        }
+      ],
+      "contentStyle": {
+        "padding": "16px 20px",
+        "overflow": "auto",
+        "background": "transparent",
+        "height": "calc(100% - 40px)"
+      },
+      "style": {
+        "paddingBottom": null,
+        "paddingRight": null,
+        "width": "",
+        "paddingTop": null,
+        "paddingLeft": null,
+        "height": "100%"
+      }
+    },
+    "children": [
+      {
+        "uuid": "queryForm1",
+        "name": "QueryForm",
+        "props": {
+          "defaultExpand": false,
+          "showSearch": true,
+          "onSearch": [
+            {
+              "waitType": "debounce",
+              "args": [
+                "values"
+              ],
+              "enableWait": true,
+              "waitMs": 100,
+              "method": "trigger",
+              "targetId": "queryVariables",
+              "_$t_$": "action",
+              "type": "query",
+              "params": {},
+              "event": "onSearch",
+              "enabled": true
+            }
+          ],
+          "onReset": [
+            {
+              "waitType": "debounce",
+              "args": [],
+              "enableWait": true,
+              "waitMs": 100,
+              "method": "trigger",
+              "targetId": "queryVariables",
+              "_$t_$": "action",
+              "type": "query",
+              "params": {},
+              "event": "onReset",
+              "enabled": true
+            }
+          ],
+          "showReset": true,
+          "defaultExpanded": true
+        },
+        "children": [
+          {
+            "uuid": "formItem1",
+            "name": "Form.Item",
+            "props": {
+              "name": "modelName"
+            },
+            "children": [
+              {
+                "uuid": "select2",
+                "name": "Select",
+                "props": {
+                  "size": "middle",
+                  "optionFilterProp": "children",
+                  "onChange": [
+                    {
+                      "waitType": "debounce",
+                      "args": [
+                        "value"
+                      ],
+                      "enableWait": true,
+                      "waitMs": 100,
+                      "method": "trigger",
+                      "targetId": "queryVariables",
+                      "_$t_$": "action",
+                      "type": "script",
+                      "params": {
+                        "src": "queryForm1.setFieldsValue({\n  modelVersion: undefined\n});\n\nqueryModelVersions.trigger({\n  data: {\n    code: searchModels.value?.find(item => item.value === value)?.code\n  }\n}).then(modelVersions => {\n  importModelVersions.setValue(modelVersions);\n});"
+                      },
+                      "event": "onChange",
+                      "enabled": true
+                    }
+                  ],
+                  "dropdownMatchSelectWidth": true,
+                  "showSearch": true,
+                  "options": "{{searchModels.value}}",
+                  "onSearch": [
+                    {
+                      "waitType": "debounce",
+                      "args": [
+                        "value"
+                      ],
+                      "enableWait": true,
+                      "waitMs": 100,
+                      "method": "trigger",
+                      "targetId": "queryVariables",
+                      "_$t_$": "action",
+                      "type": "script",
+                      "params": {
+                        "src": "queryModels.trigger({\n  params: {\n    name: value\n  }\n});\n"
+                      },
+                      "event": "onSearch",
+                      "enabled": true
+                    }
+                  ],
+                  "showArrow": true,
+                  "placeholder": "请选择模型",
+                  "autoClearSearchValue": true,
+                  "bordered": true
+                }
+              }
+            ]
+          },
+          {
+            "uuid": "formItem2",
+            "name": "Form.Item",
+            "props": {
+              "name": "modelVersion"
+            },
+            "children": [
+              {
+                "uuid": "select1",
+                "name": "Select",
+                "props": {
+                  "options": "{{queryModelVersions.data || []}}",
+                  "placeholder": "请选择模型版本"
+                }
+              }
+            ]
+          }
+        ],
+        "slotMap": {
+          "extraActions": [
+            {
+              "uuid": "button1",
+              "name": "Button",
+              "props": {
+                "onClick": [
+                  {
+                    "waitType": "debounce",
+                    "args": [],
+                    "enableWait": true,
+                    "waitMs": 100,
+                    "method": "setValue",
+                    "targetId": "exportModalVisible",
+                    "_$t_$": "action",
+                    "type": "script",
+                    "params": {
+                      "src": "const { modelName, modelVersion } = queryForm1.values || {};\n\n// if (!modelName) {\n//   message.warning('最大支持导出500条，请筛选后进行导出');\n//   return;\n// }\n\nexportVariables.trigger({\n  params: {\n    modelName,\n    modelVersion  \n  },\n  responseType: 'blob'\n}).then(({ fileBlob, fileName }) => {\n  if (fileBlob?.type?.includes('application/json')) {\n    return fileBlob?.text().then(text => {\n      const data = JSON.parse(text); \n      if (!data?.success) {\n        message.error(data?.message || 'unknow error');\n      }\n      return data;\n    });\n  } else {\n    fileSaver.saveAs(fileBlob, fileName);  \n  }\n});\n"
+                    },
+                    "event": "onClick",
+                    "enabled": true
+                  }
+                ],
+                "size": "default",
+                "children": "导出",
+                "type": "default"
+              }
+            },
+            {
+              "uuid": "button2",
+              "name": "Button",
+              "props": {
+                "onClick": [
+                  {
+                    "waitType": "debounce",
+                    "args": [],
+                    "enableWait": true,
+                    "waitMs": 100,
+                    "method": "setValue",
+                    "targetId": "importModalVisible",
+                    "_$t_$": "action",
+                    "type": "state",
+                    "params": {
+                      "value": true
+                    },
+                    "event": "onClick",
+                    "enabled": true
+                  }
+                ],
+                "size": "default",
+                "children": "导入",
+                "type": "primary"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "uuid": "table1",
+        "name": "Table",
+        "props": {
+          "pagination": {
+            "current": "{{queryVariables.data?.curPage || 1}}",
+            "total": "{{queryVariables.data?.total}}",
+            "pageSizeOptions": [
+              "10",
+              "20",
+              "30",
+              "40"
+            ],
+            "showTotal": {
+              "args": [
+                "total",
+                "range"
+              ],
+              "src": "共{{queryVariables.data?.total}}条记录",
+              "_$t_$": "function"
+            },
+            "hideOnSinglePage": false,
+            "pageSize": "{{queryVariables.data?.pageSize || 10}}",
+            "position": "bottom",
+            "showQuickJumper": true,
+            "showSizeChanger": true
+          },
+          "expandRowByClick": false,
+          "onChange": [
+            {
+              "waitType": "debounce",
+              "args": [
+                "pagination",
+                "filters",
+                "sorter",
+                "extra"
+              ],
+              "enableWait": true,
+              "waitMs": 100,
+              "method": "trigger",
+              "targetId": "queryVariables",
+              "_$t_$": "action",
+              "type": "script",
+              "params": {
+                "src": "console.log('pagination...', pagination, filters, sorter, extra);\n\nqueryVariables.trigger({\n  data: {\n    curPage: pagination?.current || 1,\n    pageSize: pagination?.pageSize || 10,\n    ...queryForm1.values\n  }\n});\n"
+              },
+              "event": "onChange",
+              "enabled": true
+            }
+          ],
+          "actionColumnPosition": "right",
+          "columns": [
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "序号",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "id",
+              "valueType": "text",
+              "fixed": "left"
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "指标中文名称",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "indexCnName",
+              "valueType": "text",
+              "width": 160,
+              "fixed": "left",
+              "key": "name"
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "指标英文名称",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "indexEnName",
+              "valueType": "text",
+              "width": 160
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "模型名称",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "modelName",
+              "valueType": "text",
+              "width": 160,
+              "key": "age"
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "模型版本",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "modelVersion",
+              "valueType": "text",
+              "width": 130
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "数据源",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "dataSource",
+              "valueType": "text",
+              "width": 120
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "获取方式",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "obtainWay",
+              "valueType": "text",
+              "width": 200,
+              "key": "address"
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "汇总维度",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "summaryDimension",
+              "valueType": "text",
+              "width": 120
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "业务含义",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "bizMean",
+              "valueType": "text",
+              "width": 120
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "业务逻辑",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "bizLogic",
+              "valueType": "text",
+              "width": 120
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "特殊值说明",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "specialDes",
+              "valueType": "text",
+              "width": 160
+            },
+            {
+              "imageWidth": 24,
+              "statusTitleColor": false,
+              "dateFormat": "YYYY-MM-DD",
+              "tagColor": "red",
+              "statusColor": "blue",
+              "linkTarget": "_blank",
+              "title": "是否业务标签",
+              "align": "left",
+              "imageHeight": 24,
+              "formatter": {
+                "args": [
+                  "self",
+                  "record",
+                  "index"
+                ],
+                "src": "{{self ? '是' : '否'}}",
+                "_$t_$": "function"
+              },
+              "sortDirections": [
+                "ascend",
+                "descend"
+              ],
+              "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+              "dataIndex": "bizLabelFlag",
+              "valueType": "text",
+              "width": 160
+            }
+          ],
+          "showHeader": true,
+          "defaultExpandAllRows": false,
+          "bordered": false,
+          "loading": "{{queryVariables.isFetching}}",
+          "locale": {
+            "filterReset": "重置",
+            "emptyText": "暂无数据",
+            "filterConfirm": "确定"
+          },
+          "size": "default",
+          "actionColumnAlign": "left",
+          "actionConfig": [
+            {
+              "onClick": {
+                "waitType": "debounce",
+                "args": [
+                  "cell",
+                  "record",
+                  "index"
+                ],
+                "enableWait": true,
+                "waitMs": 100,
+                "method": "trigger",
+                "_$t_$": "action",
+                "type": "script",
+                "params": {
+                  "src": "currentRecord.setValue(record);\n\nqueryVariableDetail.trigger({\n  data: {\n    modelUuid: record.modelUuid,\n    modelCode: record.modelCode\n  }\n}).then(detail => {\n  currentRecord.setValue({\n    ...currentRecord.value,\n    data: detail \n  });\n});"
+                },
+                "event": "onTableOperation",
+                "enabled": true
+              },
+              "disabled": false,
+              "text": "详情",
+              "type": "link",
+              "align": "right"
+            }
+          ],
+          "actionColumnFixed": "right",
+          "actionColumnTitle": "操作",
+          "indentSize": 15,
+          "dataSource": "{{queryVariables.data?.data || []}}",
+          "scrollX": 1800
+        }
+      },
+      {
+        "uuid": "modal3",
+        "name": "Modal",
+        "props": {
+          "visible": false,
+          "okType": "primary",
+          "getContainer": false,
+          "destroyOnClose": true,
+          "hasFooter": true,
+          "title": "弹窗标题"
+        },
+        "slotMap": {
+          "footer": []
+        }
+      },
+      {
+        "uuid": "layerPage1",
+        "name": "LayerPage",
+        "props": {
+          "onBack": [
+            {
+              "waitType": "debounce",
+              "args": [],
+              "enableWait": true,
+              "waitMs": 100,
+              "method": "setValue",
+              "targetId": "currentRecord",
+              "_$t_$": "action",
+              "type": "state",
+              "params": {
+                "value": null
+              },
+              "event": "onBack",
+              "enabled": true
+            }
+          ],
+          "visible": "{{!!currentRecord.value}}",
+          "showGoBack": true,
+          "destroyOnClose": true,
+          "title": "{{currentRecord.value?.modelName}}"
+        },
+        "children": [
+          {
+            "uuid": "table2",
+            "name": "Table",
+            "props": {
+              "pagination": {
+                "total": "{{currentRecord.value?.data?.total}}",
+                "current": "{{currentRecord.value?.data?.curPage || 1}}",
+                "pageSizeOptions": [
+                  "10",
+                  "20",
+                  "30",
+                  "40"
+                ],
+                "showTotal": {
+                  "args": [
+                    "total",
+                    "range"
+                  ],
+                  "src": "总共{{currentRecord.value?.data?.total}}条记录",
+                  "_$t_$": "function"
+                },
+                "hideOnSinglePage": false,
+                "pageSize": "{{currentRecord.value?.data?.pageSize || 10}}",
+                "position": "bottom",
+                "showQuickJumper": true,
+                "showSizeChanger": true
+              },
+              "expandRowByClick": false,
+              "onChange": [
+                {
+                  "waitType": "debounce",
+                  "args": [
+                    "pagination",
+                    "filters",
+                    "sorter",
+                    "extra"
+                  ],
+                  "enableWait": true,
+                  "waitMs": 100,
+                  "method": "trigger",
+                  "targetId": "queryVariables",
+                  "_$t_$": "action",
+                  "type": "script",
+                  "params": {
+                    "src": "queryVariableDetail.trigger({\n  data: {\n    pageSize: pagination?.pageSize || 10,\n    curPage: pagination?.current || 1\n  }\n}).then(detail => {\n  currentRecord.setValue({\n    ...currentRecord.value,\n    data: detail\n  });\n});\n"
+                  },
+                  "event": "onChange",
+                  "enabled": true
+                }
+              ],
+              "actionColumnPosition": "right",
+              "columns": [
+                {
+                  "imageWidth": 24,
+                  "statusTitleColor": false,
+                  "dateFormat": "YYYY-MM-DD",
+                  "tagColor": "red",
+                  "statusColor": "blue",
+                  "linkTarget": "_blank",
+                  "title": "日期",
+                  "align": "left",
+                  "imageHeight": 24,
+                  "formatter": {
+                    "args": [
+                      "self",
+                      "record",
+                      "index"
+                    ],
+                    "src": "{{self}}",
+                    "_$t_$": "function"
+                  },
+                  "sortDirections": [
+                    "ascend",
+                    "descend"
+                  ],
+                  "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                  "dataIndex": "createTime",
+                  "valueType": "text",
+                  "width": 220,
+                  "fixed": "left",
+                  "key": "name"
+                },
+                {
+                  "imageWidth": 24,
+                  "statusTitleColor": false,
+                  "dateFormat": "YYYY-MM-DD",
+                  "tagColor": "red",
+                  "statusColor": "blue",
+                  "linkTarget": "_blank",
+                  "title": "模型名称",
+                  "align": "left",
+                  "imageHeight": 24,
+                  "formatter": {
+                    "args": [
+                      "self",
+                      "record",
+                      "index"
+                    ],
+                    "src": "{{self}}",
+                    "_$t_$": "function"
+                  },
+                  "sortDirections": [
+                    "ascend",
+                    "descend"
+                  ],
+                  "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                  "dataIndex": "modelName",
+                  "valueType": "text",
+                  "width": 160,
+                  "fixed": "left",
+                  "key": "age"
+                },
+                {
+                  "imageWidth": 24,
+                  "statusTitleColor": false,
+                  "dateFormat": "YYYY-MM-DD",
+                  "tagColor": "red",
+                  "statusColor": "blue",
+                  "linkTarget": "_blank",
+                  "title": "模型版本",
+                  "align": "left",
+                  "imageHeight": 24,
+                  "formatter": {
+                    "args": [
+                      "self",
+                      "record",
+                      "index"
+                    ],
+                    "src": "{{self}}",
+                    "_$t_$": "function"
+                  },
+                  "sortDirections": [
+                    "ascend",
+                    "descend"
+                  ],
+                  "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                  "dataIndex": "modelVersion",
+                  "valueType": "text",
+                  "width": 160,
+                  "key": "address"
+                },
+                {
+                  "dataIndex": "indexSource",
+                  "title": "指标来源"
+                },
+                {
+                  "dataIndex": "useStage",
+                  "title": "作用阶段"
+                },
+                {
+                  "dataIndex": "callFrom",
+                  "title": "调用渠道"
+                },
+                {
+                  "dataIndex": "lossRate",
+                  "title": "缺失率"
+                },
+                {
+                  "dataIndex": "ivValue",
+                  "title": "IV值"
+                },
+                {
+                  "dataIndex": "psiValue",
+                  "title": "PSI值"
+                }
+              ],
+              "showHeader": true,
+              "defaultExpandAllRows": false,
+              "bordered": false,
+              "loading": "{{queryVariableDetail.isFetching}}",
+              "locale": {
+                "filterReset": "重置",
+                "emptyText": "暂无数据",
+                "filterConfirm": "确定"
+              },
+              "size": "default",
+              "actionColumnAlign": "left",
+              "actionColumnTitle": "操作",
+              "indentSize": 15,
+              "dataSource": "{{currentRecord.value?.data?.data || []}}",
+              "scrollX": 1400
+            }
+          }
+        ]
+      },
+      {
+        "uuid": "modal1",
+        "name": "Modal",
+        "props": {
+          "visible": "{{importModalVisible.value}}",
+          "okType": "primary",
+          "getContainer": false,
+          "onCancel": [
+            {
+              "waitType": "debounce",
+              "args": [],
+              "enableWait": true,
+              "waitMs": 100,
+              "method": "setValue",
+              "targetId": "importModalVisible",
+              "_$t_$": "action",
+              "type": "state",
+              "params": {
+                "value": false
+              },
+              "event": "onCancel",
+              "enabled": true
+            }
+          ],
+          "destroyOnClose": true,
+          "hasFooter": true,
+          "title": "导入指标",
+          "onOk": [
+            {
+              "waitType": "debounce",
+              "args": [],
+              "enableWait": true,
+              "waitMs": 100,
+              "method": "trigger",
+              "targetId": "queryVariables",
+              "_$t_$": "action",
+              "type": "script",
+              "params": {
+                "src": "form1.submit();"
+              },
+              "event": "onOk",
+              "enabled": true
+            }
+          ]
+        },
+        "children": [
+          {
+            "uuid": "form1",
+            "name": "Form",
+            "props": {
+              "layout": "horizontal",
+              "labelAlign": "right",
+              "Form": {
+                "Item": [
+                  {
+                    "props.name": "modelName"
+                  },
+                  {
+                    "props.name": "modelVersion"
+                  },
+                  {
+                    "props.name": "variableFile"
+                  }
+                ]
+              },
+              "wrapperCol": {
+                "span": 18
+              },
+              "onSubmit": [
+                {
+                  "waitType": "debounce",
+                  "args": [
+                    "values"
+                  ],
+                  "enableWait": true,
+                  "waitMs": 100,
+                  "method": "trigger",
+                  "targetId": "queryVariables",
+                  "_$t_$": "action",
+                  "type": "script",
+                  "params": {
+                    "src": "const values = form1.values;\nconst { uuid, code } = importModels.value?.find(({ value }) => values.modelName) || {};\n\nimportVariables.trigger({\n  data: {\n      ...values,\n    modelCode: code,\n    modelUuid: uuid,\n    variableFile: values.variableFile?.file\n  }\n}).then(() => {\n  message.success('导入成功');\n  queryVariables.trigger();\n  importModalVisible.setValue(false);\n});"
+                  },
+                  "event": "onSubmit",
+                  "enabled": true
+                }
+              ],
+              "colon": true,
+              "style": {
+                "position": "relative"
+              },
+              "labelCol": {
+                "span": 5
+              }
+            },
+            "children": [
+              {
+                "uuid": "button4",
+                "name": "Button",
+                "props": {
+                  "onClick": [
+                    {
+                      "waitType": "debounce",
+                      "args": [],
+                      "enableWait": true,
+                      "waitMs": 100,
+                      "method": "trigger",
+                      "targetId": "queryVariables",
+                      "_$t_$": "action",
+                      "type": "script",
+                      "params": {
+                        "src": "window.open(`${location.origin}/modelexApi/variable/download/templateOfCsv`, '_blank');"
+                      },
+                      "event": "onClick",
+                      "enabled": true
+                    }
+                  ],
+                  "size": "default",
+                  "children": "下载模版",
+                  "style": {
+                    "top": "80px",
+                    "left": "180px",
+                    "position": "absolute"
+                  },
+                  "type": "link"
+                }
+              },
+              {
+                "uuid": "formItem3",
+                "name": "Form.Item",
+                "props": {
+                  "name": "modelName",
+                  "rules": [
+                    {
+                      "ruleType": "required",
+                      "message": "",
+                      "required": true
+                    }
+                  ],
+                  "label": "模型名称",
+                  "required": true
+                },
+                "children": [
+                  {
+                    "uuid": "select4",
+                    "name": "Select",
+                    "props": {
+                      "size": "middle",
+                      "optionFilterProp": "children",
+                      "onChange": [
+                        {
+                          "waitType": "debounce",
+                          "args": [
+                            "value"
+                          ],
+                          "enableWait": true,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "queryVariables",
+                          "_$t_$": "action",
+                          "type": "script",
+                          "params": {
+                            "src": "form1.setFieldsValue({\n  modelVersion: undefined\n});\n\nqueryModelVersions.trigger({\n  data: {\n    code: importModels.value?.find(item => item.value === value)?.code\n  }\n}).then(modelVersions => {\n  importModelVersions.setValue(modelVersions);\n});\n"
+                          },
+                          "event": "onChange",
+                          "enabled": true
+                        }
+                      ],
+                      "dropdownMatchSelectWidth": true,
+                      "showSearch": true,
+                      "options": "{{importModels.value || []}}",
+                      "onSearch": [
+                        {
+                          "waitType": "debounce",
+                          "args": [
+                            "value"
+                          ],
+                          "enableWait": true,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "queryVariables",
+                          "_$t_$": "action",
+                          "type": "script",
+                          "params": {
+                            "src": "queryModels.trigger({\n  data: {\n    name: value\n  }\n}).then(models => {\n  importModels.setValue(models);\n})"
+                          },
+                          "event": "onSearch",
+                          "enabled": true
+                        }
+                      ],
+                      "showArrow": true,
+                      "placeholder": "请选择模型",
+                      "autoClearSearchValue": true,
+                      "bordered": true
+                    }
+                  }
+                ]
+              },
+              {
+                "uuid": "formItem4",
+                "name": "Form.Item",
+                "props": {
+                  "name": "modelVersion",
+                  "rules": [
+                    {
+                      "ruleType": "required",
+                      "required": true
+                    }
+                  ],
+                  "label": "模型版本",
+                  "required": true
+                },
+                "children": [
+                  {
+                    "uuid": "select5",
+                    "name": "Select",
+                    "props": {
+                      "size": "middle",
+                      "optionFilterProp": "children",
+                      "dropdownMatchSelectWidth": true,
+                      "options": "{{importModelVersions.value || []}}",
+                      "showArrow": true,
+                      "placeholder": "请选择模型版本",
+                      "autoClearSearchValue": true,
+                      "bordered": true
+                    }
+                  }
+                ]
+              },
+              {
+                "uuid": "formItem5",
+                "name": "Form.Item",
+                "props": {
+                  "name": "variableFile",
+                  "rules": [
+                    {
+                      "ruleType": "validator",
+                      "validator": "{{function (rule, value, callback) {\n  if (value) {\n    callback();\n  }\n  callback('请上传文件');\n}}}"
+                    }
+                  ],
+                  "label": "上传文件",
+                  "required": true
+                },
+                "children": [
+                  {
+                    "uuid": "upload1",
+                    "name": "Upload",
+                    "props": {
+                      "onChange": [
+                        {
+                          "waitType": "debounce",
+                          "args": [
+                            {
+                              "extra": [
+                                {
+                                  "path": [
+                                    "file"
+                                  ],
+                                  "name": "file"
+                                },
+                                {
+                                  "path": [
+                                    "fileList"
+                                  ],
+                                  "name": "fileList"
+                                },
+                                {
+                                  "path": [
+                                    "event"
+                                  ],
+                                  "name": "event"
+                                }
+                              ],
+                              "name": "event"
+                            }
+                          ],
+                          "enableWait": true,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "queryVariables",
+                          "_$t_$": "action",
+                          "type": "script",
+                          "params": {
+                            "src": "console.log('file change...', file, fileList);\nform1.setFieldsValue({\n  variableFile: file\n});"
+                          },
+                          "event": "onChange",
+                          "enabled": true
+                        }
+                      ],
+                      "children": "上传",
+                      "beforeUpload": {
+                        "args": [
+                          "file",
+                          "fileList"
+                        ],
+                        "src": "{{false}}",
+                        "_$t_$": "function"
+                      },
+                      "accept": ".csv,.xsl"
+                    },
+                    "children": [
+                      {
+                        "uuid": "button3",
+                        "name": "Button",
+                        "props": {
+                          "size": "default",
+                          "children": "上传文件",
+                          "type": "primary"
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "slotMap": {
+      "header": [
+        {
+          "uuid": "header2",
+          "name": "Header",
+          "props": {
+            "goBackText": "返回",
+            "showGoBack": false,
+            "title": "变量库"
+          }
+        }
+      ]
+    }
+  }
+}
