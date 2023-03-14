@@ -70,7 +70,7 @@ const getDeclarationsFromFunctionNode = node => node.body?.body?.filter(isVariab
 const isVariableExistInFuncParams = (path, name) => {
   let isExist = false;
 
-  path.findParent(({ node })=> {
+  path.findParent(({ node }) => {
     if (isFunctionExpressionNode(node)) {
       isExist = getParamsFromFunctionNode(node).includes(name) || getDeclarationsFromFunctionNode(node)?.includes(name);
 
@@ -79,7 +79,7 @@ const isVariableExistInFuncParams = (path, name) => {
   });
 
   return isExist;
-}; 
+};
 
 const getVariablesFromMemberExpression = (path, variables = []) => {
   const { node } = path;
@@ -87,7 +87,7 @@ const getVariablesFromMemberExpression = (path, variables = []) => {
   const referenceVariables = [];
 
   if (isIdentifier(node.object) && variables.includes(name) && !isVariableExistInFuncParams(path, name)) {
-      referenceVariables.push(name);
+    referenceVariables.push(name);
   }
 
   return referenceVariables;
@@ -117,7 +117,7 @@ const safeParseExpression = (exp, defaultValue) => {
 const getReferenceVariablesFromExpression = (expression, variables) => {
   let referenceVariables = [];
   const astNode = safeParseExpression(`function () { ${expression} }`, safeParseExpression(expression));
-    
+
   traverse(astNode, {
     noScope: true,
     MemberExpression(path) {
@@ -140,7 +140,7 @@ const getReferenceVariablesFromExpression = (expression, variables) => {
             }
             break;
         }
-      } 
+      }
     },
     enter(path) {
       // console.log('path...', path, path.node);
@@ -151,7 +151,8 @@ const getReferenceVariablesFromExpression = (expression, variables) => {
 };
 
 module.exports = {
-  getReferenceVariablesFromExpression
+  getReferenceVariablesFromExpression,
+  findReferencesFromExpression: getReferenceVariablesFromExpression
 };
 
 

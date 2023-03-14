@@ -1,11 +1,19 @@
 const assert = require('assert');
 const { getReferenceVariablesFromExpression } = require('./get-reference-variables-from-expression');
-const { parseExpression } = require('@babel/parser');
-
 
 const variables = ['queryModels', 'users', 'models', 'fieldsMap', 'item'];
 
 const expressionCases = [
+  {
+    src: `queryModels.data?.reduce((acc, { eleName, paramValue }) => {
+      acc[eleName] = paramValue
+      return acc;
+    }, {
+      version: policyVersionList.value?.length === 1 ? policyVersionList.value[0]?.value : undefined
+    })`,
+    expected: ['queryModels'],
+    message: `expected result: ['queryModels']`
+  },
   {
     src: `queryModels.data?.data.map(({ uuid, name, item }) => {
       const dict = fieldsMap;
@@ -15,12 +23,12 @@ const expressionCases = [
       };
     })`,
     expected: ['queryModels', 'fieldsMap'],
-    message: `expendted result: ['queryModels', 'fieldsMap']`
+    message: `expected result: ['queryModels', 'fieldsMap']`
   },
   {
     src: 'queryModels',
     expected: ['queryModels'],
-    message: `expendted result: ['queryModels']`
+    message: `expected result: ['queryModels']`
   },
   {
     src: 'queryModels.data.data',
@@ -127,12 +135,11 @@ const expressionCases = [
     expected: ['item'],
     message: `expected result: ['item']`
   }
-
 ];
 
 //console.log(JSON.stringify(parseExpression(expressionCases.slice(-1)[0].src, { noScope: true })));
 
-expressionCases.forEach(({ src: expression, expected, message })=> {
+expressionCases.forEach(({ src: expression, expected, message }) => {
   const referenceVariables = getReferenceVariablesFromExpression(expression, variables);
   console.log(`${expression}\n ${JSON.stringify(referenceVariables)}`);
   assert.deepEqual(referenceVariables, expected, message);
