@@ -12,4 +12,5 @@ const text = CryptoJS.AES.encrypt(
 	padding: CryptoJS.pad.Iso10126
     }
 ).toString();
+
 console.log(text);
