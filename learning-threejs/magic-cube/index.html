@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Magic Cube</title>
+        <style>
+            html, body {
+                margin: 0;
+                padding: 0;
+            }
+            .ui-actions {
+                position: absolute;
+                left: 0;
+                top: 0;
+                z-index: 9; 
+            }
+            
+            .face-actions {
+                list-style: none;
+                width: 600px;
+            }
+
+            .face-actions li,
+            .magic-cube-actions li {
+                padding: 4px 8px;
+                border-radius: 2px;
+                border: 1px solid black;
+                margin: 10px;
+                cursor: pointer;
+                display: inline-block;
+                min-width: 50px;
+                &:hover {
+                    background: #000;
+                    color: #fff;
+                    font-weight: 600;
+                }
+            }
+        </style>
+        <script type="text/javascript" src="../libs/three.js"></script>
+        <script src="../libs/OrbitControls.js"></script>
+    </head>
+    <body>
+        <div id="root"></div>
+        <div id="ui-actions" class="ui-actions">
+            <ul class="face-actions"></ul>
+            <ul class="magic-cube-actions"></ul>
+        </div>
+        <script src="./actions-ui.js"></script>
+        <script type="text/javascript" src="./magicCube.js"></script>
+    </body>
+</html>

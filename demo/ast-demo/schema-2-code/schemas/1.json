@@ -1,0 +1,144 @@
+{
+  "name": "Test01",
+  "elements": {},
+  "uuid": "148206bb33c9442ebf41dc3f7ab09ab7",
+  "dataSourceMap": {},
+  "componentsTree": {
+    "uuid": "page1",
+    "layout": {
+      "type": "flow"
+    },
+    "name": "Page",
+    "condition": true,
+    "props": {
+      "style": {
+        "paddingBottom": "16px",
+        "paddingRight": "20px",
+        "paddingTop": "16px",
+        "paddingLeft": "20px"
+      }
+    },
+    "children": [
+      {
+        "uuid": "button1",
+        "name": "Button",
+        "props": {
+          "size": "default",
+          "children": "按钮",
+          "type": "default"
+        }
+      },
+      {
+        "uuid": "container1",
+        "name": "Container",
+        "props": {
+          "waterMarkProps": {
+            "rotate": -22,
+            "gapX": 200,
+            "gapY": 100,
+            "textAlign": "center",
+            "fontSize": 14,
+            "fontStyle": "normal",
+            "content": [
+              "墨方-低代码平台",
+              "同盾科技"
+            ],
+            "fontWeight": "normal",
+            "fontColor": "rgba(0,0,0,.15)",
+            "zIndex": 9
+          }
+        }
+      },
+      {
+        "uuid": "table1",
+        "name": "Table",
+        "props": {
+          "pagination": {
+            "pageSizeOptions": [
+              "10",
+              "20",
+              "30",
+              "40"
+            ],
+            "hideOnSinglePage": false,
+            "position": "bottom",
+            "showQuickJumper": false,
+            "showSizeChanger": false,
+            "showTotal": {
+              "src": "共{{total}}条",
+              "_$t_$": "function",
+              "args": [
+                "total",
+                "range"
+              ]
+            }
+          },
+          "expandRowByClick": false,
+          "actionColumnPosition": "right",
+          "columns": [
+            {
+              "dataIndex": "name",
+              "valueType": "text",
+              "title": "姓名",
+              "key": "name"
+            },
+            {
+              "dataIndex": "age",
+              "valueType": "text",
+              "title": "年龄",
+              "key": "age"
+            },
+            {
+              "dataIndex": "address",
+              "valueType": "text",
+              "title": "住址",
+              "key": "address"
+            }
+          ],
+          "showHeader": true,
+          "defaultExpandAllRows": false,
+          "bordered": false,
+          "loading": false,
+          "locale": {
+            "filterReset": "重置",
+            "emptyText": "暂无数据",
+            "filterConfirm": "确定"
+          },
+          "size": "default",
+          "actionColumnAlign": "left",
+          "actionColumnTitle": "操作",
+          "indentSize": 15,
+          "dataSource": [
+            {
+              "address": "西湖区湖底公园1号",
+              "name": "胡彦斌",
+              "key": "1",
+              "age": 32
+            },
+            {
+              "address": "西湖区湖底公园1号",
+              "name": "胡彦祖",
+              "key": "2",
+              "age": 42
+            }
+          ]
+        }
+      }
+    ],
+    "slotMap": {
+      "header": [
+        {
+          "uuid": "header1",
+          "name": "Header",
+          "props": {
+            "goBackText": "返回",
+            "title": "标题文本"
+          },
+          "slotName": "header"
+        }
+      ]
+    }
+  },
+  "codes": [],
+  "codeFolders": []
+}

@@ -13,5 +13,4 @@ const text = CryptoJS.AES.encrypt(
     }
 ).toString();
 
-
 console.log(text);

@@ -1,0 +1,2247 @@
+{
+  "elements": {
+    "tableHandle": {
+      "uuid": "controlContainer1",
+      "name": "tableHandle",
+      "props": {
+        "style": {}
+      },
+      "children": [
+        {
+          "name": "Button",
+          "uuid": "button1",
+          "condition": "{{currentRecord?.status==='WAIT_APPROVAL'}}",
+          "props": {
+            "onClick": [
+              {
+                "waitType": "debounce",
+                "args": [],
+                "enableWait": false,
+                "waitMs": 100,
+                "_$t_$": "action",
+                "type": "script",
+                "event": "onClick",
+                "params": {
+                  "src": "onAudit(currentRecord);"
+                },
+                "enabled": true
+              }
+            ],
+            "size": "default",
+            "children": "审批",
+            "style": {
+              "textAlign": "left",
+              "paddingLeft": "0"
+            },
+            "type": "link"
+          }
+        },
+        {
+          "name": "Button",
+          "uuid": "button3",
+          "condition": "{{currentRecord?.status==='APPROVED'}}",
+          "props": {
+            "onClick": [
+              {
+                "waitType": "debounce",
+                "args": [],
+                "enableWait": false,
+                "waitMs": 100,
+                "_$t_$": "action",
+                "type": "script",
+                "event": "onClick",
+                "params": {
+                  "src": "onView(currentRecord);"
+                },
+                "enabled": true
+              }
+            ],
+            "size": "default",
+            "children": "查看",
+            "style": {
+              "textAlign": "left",
+              "paddingLeft": "0"
+            },
+            "type": "link"
+          }
+        }
+      ],
+      "inputs": [
+        {
+          "defaultValue": {
+            "status": "WAIT_APPROVAL"
+          },
+          "name": "currentRecord",
+          "description": "当前行数据"
+        },
+        {
+          "defaultValue": "() => {}",
+          "name": "onAudit",
+          "description": "审批动作"
+        },
+        {
+          "defaultValue": "() => {}",
+          "name": "onView",
+          "description": "详情记录"
+        }
+      ]
+    }
+  },
+  "codeFolders": [],
+  "dataSourceMap": {
+    "31a6d8b6dff64584baf64dab99bc149d": {
+      "bodyType": "json",
+      "headers": [
+        {
+          "value": "{{sessionStorage.getItem(\"_csrf_\");}}",
+          "key": "X-Cf-Random"
+        }
+      ],
+      "httpStatusCodeHandles": [
+        {
+          "_$t_$": "functionBody",
+          "funcBody": "window.location.href = `/user/login?callbackUrl=${location.pathname}${encodeURIComponent(location.search)}}`;",
+          "status": 401
+        }
+      ],
+      "baseUrl": "",
+      "enableTransformer": true,
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "return data?.data;"
+      },
+      "enabledTransformer": true,
+      "events": [
+        {
+          "waitType": "debounce",
+          "enableWait": false,
+          "waitMs": 10,
+          "_$t_$": "action",
+          "type": "script",
+          "params": {
+            "src": "console.log('request error:)',  error);\nmessage.error(error?.message || error?.toString() || '未知错误');"
+          },
+          "event": "onFailure",
+          "enabled": true
+        }
+      ],
+      "interceptors": [
+        {
+          "_$t_$": "functionBody",
+          "funcBody": "const { data } = response || {};\n\nif (!data?.success) {\n  return Promise.reject(data);  \n}\n\nreturn response;"
+        }
+      ]
+    },
+    "7e81d3999c494c1c82aaef08c1902f09": {
+      "headers": [
+        {
+          "value": "{{sessionStorage.getItem(\"_csrf_\");}}",
+          "key": "X-Cf-Random"
+        }
+      ],
+      "baseUrl": "/dataApi",
+      "enableTransformer": true,
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "return data?.data;"
+      },
+      "events": [
+        {
+          "waitType": "debounce",
+          "enableWait": false,
+          "waitMs": 10,
+          "_$t_$": "action",
+          "type": "script",
+          "params": {
+            "src": "console.log('request error:)',  error);\nmessage.error(error?.message || error?.toString() || '未知错误');"
+          },
+          "event": "onFailure",
+          "enabled": true
+        }
+      ],
+      "interceptors": [
+        {
+          "_$t_$": "functionBody",
+          "funcBody": "const { data } = response || {};\n\nif (!data?.success) {\n  return Promise.reject(data);  \n}\n\nreturn response;"
+        }
+      ]
+    },
+    "920cb49625fa470b9f6a1c955a31f455": {
+      "headers": [
+        {
+          "value": "{{sessionStorage.getItem(\"_csrf_\");}}",
+          "key": "X-Cf-Random"
+        }
+      ],
+      "baseUrl": "/noahApi",
+      "enableTransformer": true,
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "return data?.data;"
+      },
+      "events": [
+        {
+          "waitType": "debounce",
+          "enableWait": false,
+          "waitMs": 10,
+          "_$t_$": "action",
+          "type": "script",
+          "params": {
+            "src": "console.log('request error:)',  error);\nmessage.error(error?.message || error?.toString() || '未知错误');"
+          },
+          "event": "onFailure",
+          "enabled": true
+        }
+      ],
+      "interceptors": [
+        {
+          "_$t_$": "functionBody",
+          "funcBody": "const { data } = response || {};\n\nif (!data?.success) {\n  return Promise.reject(data);  \n}\n\nreturn response;"
+        }
+      ]
+    }
+  },
+  "codes": [
+    {
+      "id": "auditRecord",
+      "type": "state",
+      "value": null
+    },
+    {
+      "id": "currentTab",
+      "type": "state",
+      "value": 101
+    },
+    {
+      "id": "statusMap",
+      "type": "state",
+      "value": {
+        "AVAILABLE": "geekblue",
+        "APPROVED": "green",
+        "WAIT_APPROVAL": "volcano"
+      }
+    },
+    {
+      "bodyType": "json",
+      "queryTimeout": 100000,
+      "enableTransformer": false,
+      "dataSourceUuid": "920cb49625fa470b9f6a1c955a31f455",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [],
+      "runWhenPageLoads": false,
+      "cookies": [],
+      "methodType": "POST",
+      "id": "doAuditApi",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/invoke/audit/doAudit",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "mockResponse": {
+        "type": "mockjs",
+        "uuid": "f7d0dcfbf4e64331b73ed96780b31954",
+        "enabled": true
+      },
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "bodyType": "none",
+      "queryTimeout": 100000,
+      "enableTransformer": true,
+      "dataSourceUuid": "920cb49625fa470b9f6a1c955a31f455",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "return data.data"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [],
+      "runWhenPageLoads": false,
+      "cookies": [],
+      "methodType": "GET",
+      "id": "funcQuery",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/invoke/audit/page",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [
+        {
+          "value": 1,
+          "key": "curPage"
+        },
+        {
+          "value": "{{queryForm3.values.name}}",
+          "key": "name"
+        },
+        {
+          "value": 10,
+          "key": "pageSize"
+        },
+        {
+          "value": 103,
+          "key": "sourceType"
+        },
+        {
+          "value": "{{queryForm3.values.status}}",
+          "key": "status"
+        }
+      ],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "mockResponse": {
+        "type": "mockjs",
+        "uuid": "5afcffd0026f49a29d207a6a5aa371bf",
+        "enabled": true
+      },
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "bodyType": "none",
+      "queryTimeout": 100000,
+      "enableTransformer": true,
+      "dataSourceUuid": "920cb49625fa470b9f6a1c955a31f455",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "return data.data"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [],
+      "runWhenPageLoads": false,
+      "cookies": [],
+      "methodType": "GET",
+      "id": "modelQuery",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/invoke/audit/page",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [
+        {
+          "value": 1,
+          "key": "curPage"
+        },
+        {
+          "value": "{{queryForm2.values.name}}",
+          "key": "name"
+        },
+        {
+          "value": 10,
+          "key": "pageSize"
+        },
+        {
+          "value": 102,
+          "key": "sourceType"
+        },
+        {
+          "value": "{{queryForm2.values.status}}",
+          "key": "status"
+        }
+      ],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "mockResponse": {
+        "type": "mockjs",
+        "uuid": "5afcffd0026f49a29d207a6a5aa371bf",
+        "enabled": true
+      },
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "bodyType": "none",
+      "queryTimeout": 100000,
+      "enableTransformer": true,
+      "dataSourceUuid": "920cb49625fa470b9f6a1c955a31f455",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody",
+        "funcBody": "return data.data"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [],
+      "runWhenPageLoads": true,
+      "cookies": [],
+      "methodType": "GET",
+      "id": "rulesQuery",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/invoke/audit/page",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [
+        {
+          "value": 1,
+          "key": "curPage"
+        },
+        {
+          "value": "{{queryForm1.values.name}}",
+          "key": "name"
+        },
+        {
+          "value": 10,
+          "key": "pageSize"
+        },
+        {
+          "value": 101,
+          "key": "sourceType"
+        },
+        {
+          "value": "{{queryForm1.values.status}}",
+          "key": "status"
+        }
+      ],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "mockResponse": {
+        "type": "mockjs",
+        "uuid": "5afcffd0026f49a29d207a6a5aa371bf",
+        "enabled": true
+      },
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "bodyType": "none",
+      "queryTimeout": 100000,
+      "enableTransformer": false,
+      "dataSourceUuid": "920cb49625fa470b9f6a1c955a31f455",
+      "queryTriggerDelay": 0,
+      "queryFailureConditions": [],
+      "transformer": {
+        "_$t_$": "functionBody"
+      },
+      "showFailureToaster": false,
+      "requireConfirmation": false,
+      "type": "restApi",
+      "body": [],
+      "runWhenPageLoads": false,
+      "cookies": [],
+      "methodType": "GET",
+      "id": "decisionQuery",
+      "events": [],
+      "headers": [],
+      "queryThrottleTime": 100,
+      "query": "/invoke/audit/page",
+      "runWhenPageLoadsDelay": 0,
+      "queryDisabled": false,
+      "params": [
+        {
+          "value": 1,
+          "key": "curPage"
+        },
+        {
+          "value": "{{queryForm4.values.name}}",
+          "key": "name"
+        },
+        {
+          "value": 10,
+          "key": "pageSize"
+        },
+        {
+          "value": 104,
+          "key": "sourceType"
+        },
+        {
+          "value": "{{queryForm4.values.status}}",
+          "key": "status"
+        }
+      ],
+      "successMessage": "请求成功",
+      "needProxy": false,
+      "mockResponse": {
+        "type": "mockjs",
+        "uuid": "5afcffd0026f49a29d207a6a5aa371bf",
+        "enabled": true
+      },
+      "watchedParams": [],
+      "showSuccessToaster": false,
+      "queryDisabledMessage": "请求已禁用",
+      "notificationDuration": 5
+    },
+    {
+      "id": "detailRecord",
+      "type": "state",
+      "value": null
+    },
+    {
+      "id": "auditStatusEnum",
+      "type": "state",
+      "value": [
+        {
+          "label": "待审批",
+          "value": 2
+        },
+        {
+          "label": "已审批",
+          "value": 3
+        }
+      ]
+    }
+  ],
+  "componentsTree": {
+    "name": "Page",
+    "uuid": "page1",
+    "condition": true,
+    "slotMap": {
+      "header": []
+    },
+    "props": {
+      "style": {
+        "backgroundColor": "#F0F1F4",
+        "paddingBottom": "0px",
+        "paddingRight": "0px",
+        "paddingTop": "0px",
+        "paddingLeft": "0px"
+      }
+    },
+    "children": [
+      {
+        "name": "Modal",
+        "uuid": "modal1",
+        "children": [
+          {
+            "name": "Form",
+            "uuid": "form1",
+            "children": [
+              {
+                "name": "Form.Item",
+                "uuid": "formItem3",
+                "children": [
+                  {
+                    "name": "RadioGroup",
+                    "uuid": "radioGroup1",
+                    "props": {
+                      "options": [
+                        {
+                          "label": "同意",
+                          "value": "1"
+                        },
+                        {
+                          "label": "拒绝",
+                          "value": "0"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "props": {
+                  "name": "operResult",
+                  "label": "审批结果",
+                  "required": true
+                }
+              },
+              {
+                "name": "Form.Item",
+                "uuid": "formItem4",
+                "children": [
+                  {
+                    "name": "Input.TextArea",
+                    "uuid": "inputTextArea1",
+                    "props": {
+                      "autoSize": {
+                        "minRows": 4,
+                        "maxRows": 6
+                      },
+                      "style": {
+                        "marginTop": "10px"
+                      },
+                      "placeholder": "请输入审批意见，200字以内；"
+                    }
+                  }
+                ],
+                "props": {
+                  "name": "remark",
+                  "rules": [
+                    {
+                      "ruleType": "required",
+                      "message": "请输入审批意见",
+                      "required": true
+                    },
+                    {
+                      "min": 2,
+                      "max": 200,
+                      "ruleType": "lengthRange",
+                      "message": "描述长度2~200个字符"
+                    }
+                  ],
+                  "label": "审批意见",
+                  "required": true
+                }
+              }
+            ],
+            "props": {
+              "layout": "horizontal",
+              "labelAlign": "right",
+              "wrapperCol": {
+                "span": 18
+              },
+              "onSubmit": [
+                {
+                  "waitType": "debounce",
+                  "args": [
+                    "values"
+                  ],
+                  "enableWait": false,
+                  "waitMs": 100,
+                  "_$t_$": "action",
+                  "type": "script",
+                  "event": "onSubmit",
+                  "params": {
+                    "src": "doAuditApi.trigger({\n  data: {\n    ...values,\n    uuid: auditRecord.value.uuid,\n    sourceType: currentTab.value\n  }\n}).then(() => {\n  auditRecord.setValue(null);\n  const refresh = {\n    '101': rulesQuery.trigger,\n    '102': modelQuery.trigger,\n    '103': funcQuery.trigger,\n    '104': decisionQuery.trigger\n  }[currentTab.value];\n  refresh?.();\n})"
+                  },
+                  "enabled": true
+                }
+              ],
+              "values": {
+                "operResult": "1"
+              },
+              "colon": true,
+              "labelCol": {
+                "span": 4
+              }
+            }
+          }
+        ],
+        "props": {
+          "visible": "{{!!auditRecord.value}}",
+          "okType": "primary",
+          "getContainer": false,
+          "onCancel": [
+            {
+              "waitType": "debounce",
+              "args": [],
+              "enableWait": false,
+              "waitMs": 100,
+              "_$t_$": "action",
+              "type": "script",
+              "event": "onCancel",
+              "params": {
+                "src": "auditRecord.setValue(null)"
+              },
+              "enabled": true
+            }
+          ],
+          "width": 600,
+          "destroyOnClose": true,
+          "hasFooter": true,
+          "title": "审核",
+          "onOk": [
+            {
+              "waitType": "debounce",
+              "args": [],
+              "enableWait": false,
+              "waitMs": 100,
+              "_$t_$": "action",
+              "type": "script",
+              "event": "onOk",
+              "params": {
+                "src": "form1.submit()"
+              },
+              "enabled": true
+            }
+          ]
+        }
+      },
+      {
+        "name": "Modal",
+        "uuid": "modal2",
+        "children": [
+          {
+            "name": "Property",
+            "uuid": "property1",
+            "props": {
+              "mode": "table",
+              "size": "default",
+              "column": 2,
+              "titleWidth": 160,
+              "dataSource": "{{[{\n  \"label\": \"名称\",\n  \"content\": detailRecord.value?.name\n}, {\n  \"label\": \"状态\",\n  \"type\": \"tag\",\n  \"content\": detailRecord.value.statusName,\n  \"props\": {\n    \"color\": statusMap.value?.[detailRecord.value?.status]\n  }\n}, {\n  \"label\": \"申请人\",\n  \"content\": detailRecord.value?.operator\n}, {\n  \"label\": \"审批人\",\n  \"content\": detailRecord.value?.auditUser\n}, {\n  \"label\": \"申请时间\",\n  \"type\": \"dateTime\",\n  \"content\": detailRecord.value?.operatorTime\n}, {\n  \"label\": \"审批时间\",\n  \"type\": \"dateTime\",\n  \"content\": detailRecord.value?.auditTime\n}, {\n  \"label\": \"渠道\",\n  \"content\": detailRecord.value?.appName\n}]}}",
+              "titleAlign": "right"
+            }
+          }
+        ],
+        "props": {
+          "visible": "{{!!detailRecord.value}}",
+          "okType": "primary",
+          "getContainer": false,
+          "onCancel": [
+            {
+              "waitType": "debounce",
+              "args": [],
+              "enableWait": false,
+              "waitMs": 100,
+              "method": "setValue",
+              "targetId": "detailRecord",
+              "_$t_$": "action",
+              "type": "state",
+              "event": "onCancel",
+              "params": {
+                "value": null
+              },
+              "enabled": true
+            }
+          ],
+          "width": 650,
+          "destroyOnClose": true,
+          "hasFooter": false,
+          "title": "查看详情"
+        }
+      },
+      {
+        "name": "Tabs",
+        "uuid": "tabs1",
+        "children": [
+          {
+            "name": "Tabs.TabPane",
+            "uuid": "tabsTabPane1",
+            "children": [
+              {
+                "name": "Container",
+                "uuid": "container1",
+                "children": [
+                  {
+                    "name": "QueryForm",
+                    "uuid": "queryForm1",
+                    "children": [
+                      {
+                        "name": "Form.Item",
+                        "uuid": "formItem2",
+                        "children": [
+                          {
+                            "name": "Select",
+                            "uuid": "select1",
+                            "props": {
+                              "options": "{{auditStatusEnum.value}}",
+                              "placeholder": "请选择",
+                              "allowClear": true
+                            }
+                          }
+                        ],
+                        "props": {
+                          "name": "status"
+                        }
+                      },
+                      {
+                        "name": "Form.Item",
+                        "uuid": "formItem1",
+                        "children": [
+                          {
+                            "name": "Input",
+                            "uuid": "input1",
+                            "props": {
+                              "placeholder": "请输入规则集名称"
+                            }
+                          }
+                        ],
+                        "props": {
+                          "name": "name"
+                        }
+                      }
+                    ],
+                    "props": {
+                      "defaultExpand": false,
+                      "showSearch": true,
+                      "onSearch": [
+                        {
+                          "waitType": "debounce",
+                          "args": [
+                            "values"
+                          ],
+                          "enableWait": false,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "rulesQuery",
+                          "_$t_$": "action",
+                          "type": "query",
+                          "event": "onSearch",
+                          "enabled": true
+                        }
+                      ],
+                      "onReset": [
+                        {
+                          "waitType": "debounce",
+                          "args": [],
+                          "enableWait": false,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "rulesQuery",
+                          "_$t_$": "action",
+                          "type": "query",
+                          "event": "onReset",
+                          "enabled": true
+                        }
+                      ],
+                      "showReset": true
+                    }
+                  },
+                  {
+                    "name": "Table",
+                    "uuid": "table1",
+                    "props": {
+                      "pagination": {
+                        "current": "{{rulesQuery.data?.curPage}}",
+                        "total": "{{rulesQuery.data?.total}}",
+                        "pageSizeOptions": [
+                          "10",
+                          "20",
+                          "30",
+                          "40"
+                        ],
+                        "onChange": [
+                          {
+                            "waitType": "debounce",
+                            "args": [
+                              "page",
+                              "pageSize"
+                            ],
+                            "enableWait": false,
+                            "waitMs": 100,
+                            "_$t_$": "action",
+                            "type": "script",
+                            "event": "pagination.onChange",
+                            "params": {
+                              "src": "rulesQuery.trigger({\n  params: {\n    curPage: page,\n    pageSize\n  }\n})"
+                            },
+                            "enabled": true
+                          }
+                        ],
+                        "hideOnSinglePage": false,
+                        "pageSize": 10,
+                        "position": "bottom",
+                        "showQuickJumper": false,
+                        "showSizeChanger": false,
+                        "showTotal": {
+                          "src": "共{{total}}条记录",
+                          "_$t_$": "function",
+                          "args": [
+                            "total",
+                            "range"
+                          ]
+                        }
+                      },
+                      "expandRowByClick": false,
+                      "actionColumnPosition": "right",
+                      "columns": [
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "name",
+                          "valueType": "text",
+                          "width": 200,
+                          "fixed": "left",
+                          "title": "规则集名称",
+                          "align": "left",
+                          "key": "name"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{record.statusName}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "statusTitleColor": false,
+                          "statusColor": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{statusMap.value[self] || 'geekblue'}}",
+                            "_$t_$": "function"
+                          },
+                          "dataIndex": "status",
+                          "valueType": "status",
+                          "width": 140,
+                          "title": "审核状态",
+                          "align": "left",
+                          "key": "age"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "statusTitleColor": false,
+                          "dataIndex": "operator",
+                          "valueType": "text",
+                          "width": 140,
+                          "title": "申请人",
+                          "align": "left",
+                          "key": "address"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                          "dataIndex": "operatorTime",
+                          "valueType": "dateTime",
+                          "width": 200,
+                          "title": "申请时间",
+                          "align": "left",
+                          "ellipsis": true
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "auditUser",
+                          "valueType": "text",
+                          "width": 140,
+                          "title": "审批人",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                          "dataIndex": "auditTime",
+                          "valueType": "dateTime",
+                          "width": 200,
+                          "title": "审批时间",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "appName",
+                          "valueType": "text",
+                          "width": 160,
+                          "title": "所属渠道",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "ops",
+                          "valueType": "custom",
+                          "width": 120,
+                          "fixed": "right",
+                          "title": "操作",
+                          "align": "left",
+                          "render": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "tableHandle",
+                            "_$t_$": "schema",
+                            "props": {
+                              "onView": "{{detailRecord.setValue}}",
+                              "currentRecord": "{{record}}",
+                              "onAudit": "{{auditRecord.setValue}}"
+                            }
+                          }
+                        }
+                      ],
+                      "showHeader": true,
+                      "defaultExpandAllRows": false,
+                      "bordered": false,
+                      "loading": "{{rulesQuery.isFetching}}",
+                      "locale": {
+                        "filterReset": "重置",
+                        "emptyText": "暂无数据",
+                        "filterConfirm": "确定"
+                      },
+                      "size": "middle",
+                      "actionColumnAlign": "left",
+                      "actionColumnFixed": "right",
+                      "actionColumnTitle": "操作",
+                      "actionColumnWidth": 220,
+                      "indentSize": 15,
+                      "dataSource": "{{rulesQuery.data?.contents}}",
+                      "scrollX": 1000,
+                      "rowKey": "uuid"
+                    }
+                  }
+                ],
+                "props": {
+                  "waterMarkProps": {
+                    "rotate": -22,
+                    "gapX": 200,
+                    "gapY": 100,
+                    "textAlign": "center",
+                    "fontSize": 14,
+                    "fontStyle": "normal",
+                    "content": [
+                      "墨方-低代码平台",
+                      "同盾科技"
+                    ],
+                    "fontWeight": "normal",
+                    "fontColor": "rgba(0,0,0,.15)",
+                    "zIndex": 9
+                  },
+                  "style": {
+                    "backgroundColor": "",
+                    "paddingBottom": "16px",
+                    "paddingRight": "20px",
+                    "paddingTop": "16px",
+                    "paddingLeft": "20px"
+                  }
+                }
+              }
+            ],
+            "props": {
+              "tab": "规则集",
+              "key": "101"
+            }
+          },
+          {
+            "name": "Tabs.TabPane",
+            "uuid": "tabsTabPane2",
+            "children": [
+              {
+                "name": "Container",
+                "uuid": "container2",
+                "children": [
+                  {
+                    "name": "QueryForm",
+                    "uuid": "queryForm2",
+                    "children": [
+                      {
+                        "name": "Form.Item",
+                        "uuid": "formItem5",
+                        "children": [
+                          {
+                            "name": "Select",
+                            "uuid": "select2",
+                            "props": {
+                              "options": "{{auditStatusEnum.value}}",
+                              "placeholder": "请选择状态",
+                              "allowClear": true
+                            }
+                          }
+                        ],
+                        "props": {
+                          "name": "status"
+                        }
+                      },
+                      {
+                        "name": "Form.Item",
+                        "uuid": "formItem6",
+                        "children": [
+                          {
+                            "name": "Input",
+                            "uuid": "input2",
+                            "props": {
+                              "placeholder": "请输入规则集名称"
+                            }
+                          }
+                        ],
+                        "props": {
+                          "name": "name"
+                        }
+                      }
+                    ],
+                    "props": {
+                      "defaultExpand": false,
+                      "showSearch": true,
+                      "onSearch": [
+                        {
+                          "waitType": "debounce",
+                          "args": [
+                            "values"
+                          ],
+                          "enableWait": false,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "modelQuery",
+                          "_$t_$": "action",
+                          "type": "query",
+                          "event": "onSearch",
+                          "enabled": true
+                        }
+                      ],
+                      "onReset": [
+                        {
+                          "waitType": "debounce",
+                          "args": [],
+                          "enableWait": false,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "modelQuery",
+                          "_$t_$": "action",
+                          "type": "query",
+                          "event": "onReset",
+                          "enabled": true
+                        }
+                      ],
+                      "showReset": true
+                    }
+                  },
+                  {
+                    "name": "Table",
+                    "uuid": "table2",
+                    "props": {
+                      "pagination": {
+                        "current": "{{modelQuery.data?.curPage}}",
+                        "total": "{{modelQuery.data?.total}}",
+                        "pageSizeOptions": [
+                          "10",
+                          "20",
+                          "30",
+                          "40"
+                        ],
+                        "onChange": [
+                          {
+                            "waitType": "debounce",
+                            "args": [
+                              "page",
+                              "pageSize"
+                            ],
+                            "enableWait": false,
+                            "waitMs": 100,
+                            "_$t_$": "action",
+                            "type": "script",
+                            "event": "pagination.onChange",
+                            "params": {
+                              "src": "rulesQuery.trigger({\n  params: {\n    curPage: page,\n    pageSize\n  }\n})"
+                            },
+                            "enabled": true
+                          }
+                        ],
+                        "hideOnSinglePage": false,
+                        "pageSize": 10,
+                        "position": "bottom",
+                        "showQuickJumper": false,
+                        "showSizeChanger": false
+                      },
+                      "expandRowByClick": false,
+                      "actionColumnPosition": "right",
+                      "columns": [
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "name",
+                          "valueType": "text",
+                          "width": 200,
+                          "fixed": "left",
+                          "title": "模型名称",
+                          "align": "left",
+                          "key": "name"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{record.statusName}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "statusTitleColor": false,
+                          "statusColor": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{statusMap.value[self] || 'geekblue'}}",
+                            "_$t_$": "function"
+                          },
+                          "dataIndex": "status",
+                          "valueType": "status",
+                          "width": 140,
+                          "title": "审核状态",
+                          "align": "left",
+                          "key": "age"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "statusTitleColor": false,
+                          "dataIndex": "operator",
+                          "valueType": "text",
+                          "width": 140,
+                          "title": "申请人",
+                          "align": "left",
+                          "key": "address"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                          "dataIndex": "operatorTime",
+                          "valueType": "dateTime",
+                          "width": 200,
+                          "title": "申请时间",
+                          "align": "left",
+                          "ellipsis": true
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "auditUser",
+                          "valueType": "text",
+                          "width": 140,
+                          "title": "审批人",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                          "dataIndex": "auditTime",
+                          "valueType": "dateTime",
+                          "width": 200,
+                          "title": "审批时间",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "appName",
+                          "valueType": "text",
+                          "width": 160,
+                          "title": "所属渠道",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}kg",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "ops",
+                          "valueType": "custom",
+                          "width": 120,
+                          "fixed": "right",
+                          "title": "操作",
+                          "align": "left",
+                          "render": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "tableHandle",
+                            "_$t_$": "schema",
+                            "props": {
+                              "auditRecord": "{{auditRecord}}",
+                              "visible": "{{auditRecord}}",
+                              "onView": "{{detailRecord.setValue}}",
+                              "visibleState": "{{auditRecord}}",
+                              "currentRecord": "{{record}}",
+                              "onAudit": "{{auditRecord.setValue}}"
+                            }
+                          }
+                        }
+                      ],
+                      "showHeader": true,
+                      "defaultExpandAllRows": false,
+                      "bordered": false,
+                      "loading": "{{modelQuery.isFetching}}",
+                      "locale": {
+                        "filterReset": "重置",
+                        "emptyText": "暂无数据",
+                        "filterConfirm": "确定"
+                      },
+                      "size": "middle",
+                      "actionColumnAlign": "left",
+                      "actionColumnFixed": "right",
+                      "actionColumnTitle": "操作",
+                      "actionColumnWidth": 220,
+                      "indentSize": 15,
+                      "dataSource": "{{modelQuery.data?.contents}}",
+                      "scrollX": 1000,
+                      "rowKey": "uuid"
+                    }
+                  }
+                ],
+                "props": {
+                  "waterMarkProps": {
+                    "rotate": -22,
+                    "gapX": 200,
+                    "gapY": 100,
+                    "textAlign": "center",
+                    "fontSize": 14,
+                    "fontStyle": "normal",
+                    "content": [
+                      "墨方-低代码平台",
+                      "同盾科技"
+                    ],
+                    "fontWeight": "normal",
+                    "fontColor": "rgba(0,0,0,.15)",
+                    "zIndex": 9
+                  },
+                  "style": {
+                    "backgroundColor": "",
+                    "paddingBottom": "16px",
+                    "paddingRight": "20px",
+                    "paddingTop": "16px",
+                    "paddingLeft": "20px"
+                  }
+                }
+              }
+            ],
+            "props": {
+              "tab": "模型",
+              "key": "102"
+            }
+          },
+          {
+            "name": "Tabs.TabPane",
+            "uuid": "tabsTabPane3",
+            "children": [
+              {
+                "name": "Container",
+                "uuid": "container3",
+                "children": [
+                  {
+                    "name": "QueryForm",
+                    "uuid": "queryForm3",
+                    "children": [
+                      {
+                        "name": "Form.Item",
+                        "uuid": "formItem7",
+                        "children": [
+                          {
+                            "name": "Select",
+                            "uuid": "select3",
+                            "props": {
+                              "options": "{{auditStatusEnum.value}}",
+                              "placeholder": "请选择状态",
+                              "allowClear": true
+                            }
+                          }
+                        ],
+                        "props": {
+                          "name": "status"
+                        }
+                      },
+                      {
+                        "name": "Form.Item",
+                        "uuid": "formItem8",
+                        "children": [
+                          {
+                            "name": "Input",
+                            "uuid": "input3",
+                            "props": {
+                              "placeholder": "请输入规则集名称"
+                            }
+                          }
+                        ],
+                        "props": {
+                          "name": "name"
+                        }
+                      }
+                    ],
+                    "props": {
+                      "defaultExpand": false,
+                      "showSearch": true,
+                      "onSearch": [
+                        {
+                          "waitType": "debounce",
+                          "args": [
+                            "values"
+                          ],
+                          "enableWait": false,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "funcQuery",
+                          "_$t_$": "action",
+                          "type": "query",
+                          "event": "onSearch",
+                          "enabled": true
+                        }
+                      ],
+                      "onReset": [
+                        {
+                          "waitType": "debounce",
+                          "args": [],
+                          "enableWait": false,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "funcQuery",
+                          "_$t_$": "action",
+                          "type": "query",
+                          "event": "onReset",
+                          "enabled": true
+                        }
+                      ],
+                      "showReset": true
+                    }
+                  },
+                  {
+                    "name": "Table",
+                    "uuid": "table3",
+                    "props": {
+                      "pagination": {
+                        "current": "{{funcQuery.data?.curPage}}",
+                        "total": "{{funcQuery.data?.total}}",
+                        "pageSizeOptions": [
+                          "10",
+                          "20",
+                          "30",
+                          "40"
+                        ],
+                        "onChange": [
+                          {
+                            "waitType": "debounce",
+                            "args": [
+                              "page",
+                              "pageSize"
+                            ],
+                            "enableWait": false,
+                            "waitMs": 100,
+                            "_$t_$": "action",
+                            "type": "script",
+                            "event": "pagination.onChange",
+                            "params": {
+                              "src": "rulesQuery.trigger({\n  params: {\n    curPage: page,\n    pageSize\n  }\n})"
+                            },
+                            "enabled": true
+                          }
+                        ],
+                        "hideOnSinglePage": false,
+                        "pageSize": 10,
+                        "position": "bottom",
+                        "showQuickJumper": false,
+                        "showSizeChanger": false
+                      },
+                      "expandRowByClick": false,
+                      "actionColumnPosition": "right",
+                      "columns": [
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "name",
+                          "valueType": "text",
+                          "width": 200,
+                          "fixed": "left",
+                          "title": "函数库名称",
+                          "align": "left",
+                          "key": "name"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{record.statusName}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "statusTitleColor": false,
+                          "statusColor": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{statusMap.value[self] || 'geekblue'}}",
+                            "_$t_$": "function"
+                          },
+                          "dataIndex": "status",
+                          "valueType": "status",
+                          "width": 140,
+                          "title": "审核状态",
+                          "align": "left",
+                          "key": "age"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "statusTitleColor": false,
+                          "dataIndex": "operator",
+                          "valueType": "text",
+                          "width": 140,
+                          "title": "申请人",
+                          "align": "left",
+                          "key": "address"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                          "dataIndex": "operatorTime",
+                          "valueType": "dateTime",
+                          "width": 200,
+                          "title": "申请时间",
+                          "align": "left",
+                          "ellipsis": true
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "auditUser",
+                          "valueType": "text",
+                          "width": 140,
+                          "title": "审批人",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                          "dataIndex": "auditTime",
+                          "valueType": "dateTime",
+                          "width": 200,
+                          "title": "审批时间",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "appName",
+                          "valueType": "text",
+                          "width": 160,
+                          "title": "所属渠道",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}kg",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "ops",
+                          "valueType": "custom",
+                          "width": 120,
+                          "fixed": "right",
+                          "title": "操作",
+                          "align": "left",
+                          "render": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "tableHandle",
+                            "_$t_$": "schema",
+                            "props": {
+                              "auditRecord": "{{auditRecord}}",
+                              "visible": "{{auditRecord}}",
+                              "onView": "{{detailRecord.setValue}}",
+                              "visibleState": "{{auditRecord}}",
+                              "currentRecord": "{{record}}",
+                              "onAudit": "{{auditRecord.setValue}}"
+                            }
+                          }
+                        }
+                      ],
+                      "showHeader": true,
+                      "defaultExpandAllRows": false,
+                      "bordered": false,
+                      "loading": "{{funcQuery.isFetching}}",
+                      "locale": {
+                        "filterReset": "重置",
+                        "emptyText": "暂无数据",
+                        "filterConfirm": "确定"
+                      },
+                      "size": "middle",
+                      "actionColumnAlign": "left",
+                      "actionColumnFixed": "right",
+                      "actionColumnTitle": "操作",
+                      "actionColumnWidth": 220,
+                      "indentSize": 15,
+                      "dataSource": "{{funcQuery.data?.contents}}",
+                      "scrollX": 1000,
+                      "rowKey": "uuid"
+                    }
+                  }
+                ],
+                "props": {
+                  "waterMarkProps": {
+                    "rotate": -22,
+                    "gapX": 200,
+                    "gapY": 100,
+                    "textAlign": "center",
+                    "fontSize": 14,
+                    "fontStyle": "normal",
+                    "content": [
+                      "墨方-低代码平台",
+                      "同盾科技"
+                    ],
+                    "fontWeight": "normal",
+                    "fontColor": "rgba(0,0,0,.15)",
+                    "zIndex": 9
+                  },
+                  "style": {
+                    "backgroundColor": "",
+                    "paddingBottom": "16px",
+                    "paddingRight": "20px",
+                    "paddingTop": "16px",
+                    "paddingLeft": "20px"
+                  }
+                }
+              }
+            ],
+            "props": {
+              "tab": "函数库",
+              "key": "103"
+            }
+          },
+          {
+            "name": "Tabs.TabPane",
+            "uuid": "tabsTabPane4",
+            "children": [
+              {
+                "name": "Container",
+                "uuid": "container4",
+                "children": [
+                  {
+                    "name": "QueryForm",
+                    "uuid": "queryForm4",
+                    "children": [
+                      {
+                        "name": "Form.Item",
+                        "uuid": "formItem9",
+                        "children": [
+                          {
+                            "name": "Select",
+                            "uuid": "select4",
+                            "props": {
+                              "options": "{{auditStatusEnum.value}}",
+                              "placeholder": "请选择状态",
+                              "allowClear": true
+                            }
+                          }
+                        ],
+                        "props": {
+                          "name": "status"
+                        }
+                      },
+                      {
+                        "name": "Form.Item",
+                        "uuid": "formItem10",
+                        "children": [
+                          {
+                            "name": "Input",
+                            "uuid": "input4",
+                            "props": {
+                              "placeholder": "请输入规则集名称"
+                            }
+                          }
+                        ],
+                        "props": {
+                          "name": "name"
+                        }
+                      }
+                    ],
+                    "props": {
+                      "defaultExpand": false,
+                      "showSearch": true,
+                      "onSearch": [
+                        {
+                          "waitType": "debounce",
+                          "args": [
+                            "values"
+                          ],
+                          "enableWait": false,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "decisionQuery",
+                          "_$t_$": "action",
+                          "type": "query",
+                          "event": "onSearch",
+                          "enabled": true
+                        }
+                      ],
+                      "onReset": [
+                        {
+                          "waitType": "debounce",
+                          "args": [],
+                          "enableWait": false,
+                          "waitMs": 100,
+                          "method": "trigger",
+                          "targetId": "decisionQuery",
+                          "_$t_$": "action",
+                          "type": "query",
+                          "event": "onReset",
+                          "enabled": true
+                        }
+                      ],
+                      "showReset": true
+                    }
+                  },
+                  {
+                    "name": "Table",
+                    "uuid": "table4",
+                    "props": {
+                      "pagination": {
+                        "current": "{{decisionQuery.data?.curPage}}",
+                        "total": "{{decisionQuery.data?.total}}",
+                        "pageSizeOptions": [
+                          "10",
+                          "20",
+                          "30",
+                          "40"
+                        ],
+                        "onChange": [
+                          {
+                            "waitType": "debounce",
+                            "args": [
+                              "page",
+                              "pageSize"
+                            ],
+                            "enableWait": false,
+                            "waitMs": 100,
+                            "_$t_$": "action",
+                            "type": "script",
+                            "event": "pagination.onChange",
+                            "params": {
+                              "src": "rulesQuery.trigger({\n  params: {\n    curPage: page,\n    pageSize\n  }\n})"
+                            },
+                            "enabled": true
+                          }
+                        ],
+                        "hideOnSinglePage": false,
+                        "pageSize": 10,
+                        "position": "bottom",
+                        "showQuickJumper": false,
+                        "showSizeChanger": false
+                      },
+                      "expandRowByClick": false,
+                      "actionColumnPosition": "right",
+                      "columns": [
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "name",
+                          "valueType": "text",
+                          "width": 200,
+                          "fixed": "left",
+                          "title": "决策工具名称",
+                          "align": "left",
+                          "key": "name"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{record.statusName}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "statusTitleColor": false,
+                          "statusColor": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{statusMap.value[self] || 'geekblue'}}",
+                            "_$t_$": "function"
+                          },
+                          "dataIndex": "status",
+                          "valueType": "status",
+                          "width": 140,
+                          "title": "审核状态",
+                          "align": "left",
+                          "key": "age"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "statusTitleColor": false,
+                          "dataIndex": "operator",
+                          "valueType": "text",
+                          "width": 140,
+                          "title": "申请人",
+                          "align": "left",
+                          "key": "address"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                          "dataIndex": "operatorTime",
+                          "valueType": "dateTime",
+                          "width": 200,
+                          "title": "申请时间",
+                          "align": "left",
+                          "ellipsis": true
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "auditUser",
+                          "valueType": "text",
+                          "width": 140,
+                          "title": "审批人",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dateTimeFormat": "YYYY-MM-DD HH:mm:ss",
+                          "dataIndex": "auditTime",
+                          "valueType": "dateTime",
+                          "width": 200,
+                          "title": "审批时间",
+                          "align": "left"
+                        },
+                        {
+                          "formatter": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "{{self}}",
+                            "_$t_$": "function"
+                          },
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "appName",
+                          "valueType": "text",
+                          "width": 160,
+                          "title": "所属渠道",
+                          "align": "left"
+                        },
+                        {
+                          "sortDirections": [
+                            "ascend",
+                            "descend"
+                          ],
+                          "dataIndex": "ops",
+                          "valueType": "custom",
+                          "width": 120,
+                          "fixed": "right",
+                          "title": "操作",
+                          "align": "left",
+                          "render": {
+                            "args": [
+                              "self",
+                              "record",
+                              "index"
+                            ],
+                            "src": "tableHandle",
+                            "_$t_$": "schema",
+                            "props": {
+                              "auditRecord": "{{auditRecord}}",
+                              "visible": "{{auditRecord}}",
+                              "onView": "{{detailRecord.setValue}}",
+                              "visibleState": "{{auditRecord}}",
+                              "currentRecord": "{{record}}",
+                              "onAudit": "{{auditRecord.setValue}}"
+                            }
+                          }
+                        }
+                      ],
+                      "showHeader": true,
+                      "defaultExpandAllRows": false,
+                      "bordered": false,
+                      "loading": "{{decisionQuery.isFetching}}",
+                      "locale": {
+                        "filterReset": "重置",
+                        "emptyText": "暂无数据",
+                        "filterConfirm": "确定"
+                      },
+                      "size": "middle",
+                      "actionColumnAlign": "left",
+                      "actionColumnFixed": "right",
+                      "actionColumnTitle": "操作",
+                      "actionColumnWidth": 220,
+                      "indentSize": 15,
+                      "dataSource": "{{decisionQuery.data?.contents}}",
+                      "scrollX": 1000,
+                      "rowKey": "uuid"
+                    }
+                  }
+                ],
+                "props": {
+                  "waterMarkProps": {
+                    "rotate": -22,
+                    "gapX": 200,
+                    "gapY": 100,
+                    "textAlign": "center",
+                    "fontSize": 14,
+                    "fontStyle": "normal",
+                    "content": [
+                      "墨方-低代码平台",
+                      "同盾科技"
+                    ],
+                    "fontWeight": "normal",
+                    "fontColor": "rgba(0,0,0,.15)",
+                    "zIndex": 9
+                  },
+                  "style": {
+                    "backgroundColor": "",
+                    "paddingBottom": "16px",
+                    "paddingRight": "20px",
+                    "paddingTop": "16px",
+                    "paddingLeft": "20px"
+                  }
+                }
+              }
+            ],
+            "props": {
+              "tab": "决策工具",
+              "key": "104"
+            }
+          }
+        ],
+        "props": {
+          "tabBarStyle": {
+            "backgroundColor": "#fff",
+            "marginBottom": "0",
+            "paddingLeft": "20px"
+          },
+          "size": "default",
+          "onChange": [
+            {
+              "waitType": "debounce",
+              "args": [
+                "activeKey"
+              ],
+              "enableWait": false,
+              "waitMs": 100,
+              "_$t_$": "action",
+              "type": "script",
+              "event": "onChange",
+              "params": {
+                "src": "currentTab.setValue(activeKey);\nif (activeKey === '101') {\n  rulesQuery.trigger();\n} else if (activeKey === '102') {\n  modelQuery.trigger();\n} else if (activeKey === '103') {\n  funcQuery.trigger();\n} else if (activeKey === '104') {\n  decisionQuery.trigger();\n}"
+              },
+              "enabled": true
+            }
+          ],
+          "activeKey": "{{currentTab.value}}",
+          "tabPosition": "top",
+          "type": "inline",
+          "defaultActiveKey": 101
+        }
+      }
+    ]
+  },
+  "name": "调用审核",
+  "uuid": "812bf2b6b07b404e91aac818f365cffa"
+}
