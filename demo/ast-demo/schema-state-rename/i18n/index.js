@@ -42,8 +42,6 @@ testCases.forEach(testCase => {
     StringLiteral(path) {
       const value = path.node.value;
 
-
-
       if (hasChinese(value)) {
         console.log('中文:)', value);
         path.replaceWith(t.callExpression(
